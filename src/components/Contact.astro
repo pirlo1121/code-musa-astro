@@ -1,0 +1,205 @@
+<section id="contact" class="contact-container">
+  <h2>Contact Me</h2>
+  <form id="contact-form" class="contact-form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required placeholder="Your Name">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+    </div>
+
+    <div class="form-group">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" required rows="5" placeholder="How can I help you?"></textarea>
+    </div>
+
+    <button type="submit" id="contact-submit">Send Message</button>
+
+    <p id="contact-success" class="success" style="display:none"></p>
+    <p id="contact-error" class="error" style="display:none"></p>
+  </form>
+</section>
+
+<style>
+  .contact-container {
+    padding: 0 2rem;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    transition: text-shadow 0.15s ease-out, color 0.15s ease-out;
+  }
+
+  body.dark-theme h2 {
+    text-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  .contact-form {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface-bg);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+
+  body.dark-theme .contact-form {
+    animation: float-hero 8s ease-in-out infinite;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+
+  input, textarea {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    background: var(--input-bg);
+    color: var(--text-color);
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out, color 0.15s ease-out;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 280px;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+
+  button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-btn-bg);
+    color: var(--primary-btn-text);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, box-shadow 0.15s ease-out;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  body.dark-theme button {
+    text-transform: none;
+    letter-spacing: normal;
+    background: var(--accent-primary);
+    color: #fff;
+  }
+
+  button:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .success { color: #28a745; margin-top: 1rem; text-align: center; }
+  .error { color: #dc3545; margin-top: 1rem; text-align: center; }
+
+  @media (max-width: 768px) {
+    .contact-container { padding: 0 1.5rem; }
+    h2 { font-size: 2rem; }
+    .contact-form { padding: 2rem; max-width: 450px; }
+  }
+
+  @media (max-width: 480px) {
+    .contact-container { padding: 0 1rem; }
+    h2 { font-size: 1.75rem; }
+    .contact-form { max-width: 350px; padding: 1.5rem; }
+    input, textarea { padding: 0.75rem; font-size: 0.95rem; }
+    button { padding: 0.875rem; font-size: 0.95rem; }
+  }
+
+  @media (max-width: 400px) {
+    .contact-form { padding: 1rem; max-width: 300px; }
+  }
+</style>
+
+<script>
+  document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const submitBtn = document.getElementById('contact-submit');
+    const successEl = document.getElementById('contact-success');
+    const errorEl = document.getElementById('contact-error');
+
+    const name = form.querySelector('#name').value;
+    const email = form.querySelector('#email').value;
+    const message = form.querySelector('#message').value;
+
+    if (!name || !email || !message) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    successEl.style.display = 'none';
+    errorEl.style.display = 'none';
+
+    try {
+      const res = await fetch('https://api.code-musa.com/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        successEl.textContent = data.msg || 'Message sent successfully!';
+        successEl.style.display = '';
+        form.querySelector('#name').value = '';
+        form.querySelector('#email').value = '';
+        form.querySelector('#message').value = '';
+      } else {
+        errorEl.textContent = data.msg || 'Failed to send message.';
+        errorEl.style.display = '';
+      }
+    } catch (err) {
+      console.error(err);
+      errorEl.textContent = 'An error occurred. Please try again.';
+      errorEl.style.display = '';
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send Message';
+  });
+</script>

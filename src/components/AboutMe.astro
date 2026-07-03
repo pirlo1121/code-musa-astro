@@ -1,0 +1,163 @@
+<section class="about-me-container">
+  <div id="profile-content">
+    <p>Loading profile...</p>
+  </div>
+</section>
+
+<style>
+  .about-me-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2rem;
+    min-height: 60vh;
+    background-color: transparent;
+    text-align: center;
+    transition: background-color 0.15s ease-out;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+  }
+
+  .about-me-container.active {
+    opacity: 1;
+  }
+
+  .profile-img {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border: 4px solid rgba(0, 0, 0, 0.696);
+    box-shadow: 0 4px 40px rgba(0, 0, 0, 0.707);
+    transition: box-shadow 0.15s ease-out, border-color 0.15s ease-out, filter 0.15s ease-out;
+  }
+
+  body.dark-theme .profile-img {
+    box-shadow: 0 0 70px #a78bfaba;
+    filter: grayscale(0.2) contrast(1.1);
+    border: 2px solid rgba(255, 255, 255, 0.594);
+    animation: float-hero 8s ease-in-out infinite;
+  }
+
+  h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    transition: text-shadow 0.15s ease-out, color 0.15s ease-out;
+  }
+
+  body.dark-theme h2 {
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    color: var(--accent-primary);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .bio {
+    max-width: 600px;
+    width: 100%;
+    margin-bottom: 2rem;
+    line-height: var(--line-height-base, 1.6);
+    color: var(--text-color);
+    font-size: 1.1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding: 0 1rem;
+    box-sizing: border-box;
+  }
+
+  body.dark-theme .bio {
+    color: var(--text-primary);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .social-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .social-links a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    padding: 0.6rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, transform 0.15s ease-out, border-color 0.15s ease-out;
+    background: var(--surface-bg);
+    backdrop-filter: blur(5px);
+    font-size: 0.95rem;
+  }
+
+  body.dark-theme .social-links a {
+    border-radius: 8px;
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+
+  .social-links a:hover {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    transform: translateY(-2px);
+  }
+
+  body.dark-theme .social-links a:hover {
+    background: var(--accent-primary);
+    color: #fff;
+    box-shadow: 0 0 15px var(--accent-glow);
+  }
+
+  @media (max-width: 768px) {
+    .about-me-container {
+      padding: 0 1.5rem;
+    }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1rem; }
+    .bio { font-size: 1rem; max-width: 100%; }
+  }
+
+  @media (max-width: 480px) {
+    .about-me-container { padding: 0 1rem; }
+    .profile-img { width: 250px; height: 250px; }
+    h2 { font-size: 1.75rem; }
+    .social-links a { padding: 0.5rem 1rem; font-size: 0.9rem; }
+  }
+</style>
+
+<script>
+  (async function() {
+    const container = document.getElementById('profile-content');
+
+    try {
+      const res = await fetch('https://api.code-musa.com/api/get/696c287de69192f9b00097c6');
+      const data = await res.json();
+      const user = data.user;
+
+      container.innerHTML = `
+        <div class="profile">
+          <img src="${user.image || '/assets/placeholder.jpg'}" alt="${user.name}" class="profile-img" width="200" height="200">
+          <h2>${user.name}</h2>
+          <h3>${user.profession}</h3>
+          <p class="bio">${user.bio || ''}</p>
+          <div class="social-links">
+            ${user.socialLinks?.github ? '<a href="' + user.socialLinks.github + '" target="_blank">GitHub</a>' : ''}
+            ${user.socialLinks?.linkedin ? '<a href="' + user.socialLinks.linkedin + '" target="_blank">LinkedIn</a>' : ''}
+          </div>
+        </div>
+      `;
+    } catch (err) {
+      console.error('Error loading user', err);
+      container.innerHTML = '<p>Failed to load profile.</p>';
+    }
+  })();
+</script>

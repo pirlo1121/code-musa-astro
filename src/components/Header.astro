@@ -1,0 +1,320 @@
+<header id="site-header">
+  <nav class="navbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <span>Dev Code</span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a data-scroll-to="about-me">About</a></li>
+      <li><a data-scroll-to="projects">Projects</a></li>
+      <li><a data-scroll-to="skills">Skills</a></li>
+      <li><a data-scroll-to="contact">Contact</a></li>
+    </ul>
+
+    <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+      <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+      <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<style>
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    padding: 1rem 0;
+    z-index: 1000;
+    background: var(--bg-color, #0d1117);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.15s ease-out, background-color 0.15s ease-out, padding 0.15s ease-out;
+  }
+
+  header.scrolled {
+    backdrop-filter: blur(12px);
+  }
+
+  header.hidden {
+    transform: translateY(-100%);
+  }
+
+  body:not(.dark-theme) header {
+    background: #ffffff;
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  body:not(.dark-theme) header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-color, #e6edf3);
+    flex-shrink: 0;
+  }
+
+  .logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--text-color, #e6edf3);
+    color: var(--bg-color, #0d1117);
+    border-radius: 8px;
+  }
+
+  body:not(.dark-theme) .logo {
+    color: #1f2328;
+  }
+
+  body:not(.dark-theme) .logo-icon {
+    background: #1f2328;
+    color: #ffffff;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links li {
+    position: relative;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: rgb(230, 237, 243);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.15s ease-out;
+    padding: 0.25rem 0;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent-primary);
+    transition: width 0.15s ease-out;
+  }
+
+  .nav-links a:hover {
+    color: var(--accent-primary);
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  body:not(.dark-theme) .nav-links a {
+    color: rgb(0, 0, 0);
+  }
+
+  body:not(.dark-theme) .nav-links a:hover {
+    color: #1f2328;
+  }
+
+  body:not(.dark-theme) .nav-links a::after {
+    background-color: #000000;
+  }
+
+  .theme-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color, #e6edf3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.15s ease-out, transform 0.15s ease-out;
+    flex-shrink: 0;
+  }
+
+  .theme-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(15deg);
+  }
+
+  body:not(.dark-theme) .theme-btn {
+    color: #000000;
+  }
+
+  body:not(.dark-theme) .theme-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  @media (max-width: 768px) {
+    header {
+      padding: 0.5rem 0;
+    }
+
+    header.scrolled {
+      padding: 0.6rem 0;
+    }
+
+    .navbar {
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0 1.5rem;
+    }
+
+    .logo {
+      order: 1;
+      flex: 1;
+    }
+
+    .theme-btn {
+      order: 2;
+    }
+
+    .nav-links {
+      order: 3;
+      width: 100%;
+      justify-content: space-between;
+      gap: 0;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    body:not(.dark-theme) .nav-links {
+      border-top-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .nav-links li {
+      flex: 1;
+      text-align: center;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      display: block;
+    }
+  }
+
+  @media (max-width: 480px) {
+    header {
+      padding: 0.6rem 0;
+    }
+
+    .navbar {
+      padding: 0 1rem;
+    }
+
+    .logo {
+      font-size: 0.9rem;
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-links a {
+      font-size: 0.8rem;
+    }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header');
+  const themeToggle = document.getElementById('theme-toggle');
+  const moonIcon = document.getElementById('moon-icon');
+  const sunIcon = document.getElementById('sun-icon');
+
+  let lastScrollY = 0;
+  let isDark = document.body.classList.contains('dark-theme');
+
+  function updateIcons() {
+    if (isDark) {
+      moonIcon.style.display = '';
+      sunIcon.style.display = 'none';
+    } else {
+      moonIcon.style.display = 'none';
+      sunIcon.style.display = '';
+    }
+  }
+  updateIcons();
+
+  themeToggle.addEventListener('click', () => {
+    isDark = !isDark;
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    if (isDark) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
+    updateIcons();
+  });
+
+  document.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      header.classList.add('hidden');
+    } else if (currentScrollY < lastScrollY) {
+      header.classList.remove('hidden');
+    }
+
+    if (currentScrollY > 20) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+
+    lastScrollY = currentScrollY;
+  });
+
+  document.querySelectorAll('[data-scroll-to]').forEach(el => {
+    el.addEventListener('click', () => {
+      const target = el.getAttribute('data-scroll-to');
+      const section = document.getElementById(target);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>

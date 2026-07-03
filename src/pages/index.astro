@@ -1,0 +1,142 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AboutMe from '../components/AboutMe.astro';
+import Projects from '../components/Projects.astro';
+import Skills from '../components/Skills.astro';
+import Contact from '../components/Contact.astro';
+import ProjectModal from '../components/ProjectModal.astro';
+---
+
+<BaseLayout title="Maicol Bautista">
+  <main class="content-container">
+    <Header />
+
+    <section id="about-me" class="scroll-section reveal">
+      <AboutMe />
+    </section>
+
+    <section id="projects" class="scroll-section reveal">
+      <Projects />
+    </section>
+
+    <section id="skills" class="scroll-section reveal">
+      <Skills />
+    </section>
+
+    <section id="contact" class="scroll-section reveal">
+      <Contact />
+    </section>
+  </main>
+
+  <Footer />
+  <ProjectModal />
+</BaseLayout>
+
+<style>
+  .content-container {
+    padding-top: 100px;
+    min-height: 100vh;
+  }
+
+  .scroll-section {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 0;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    will-change: opacity, transform;
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .content-container { padding-top: 120px; }
+    .scroll-section { padding: 3rem 0; min-height: 50vh; }
+  }
+
+  @media (max-width: 480px) {
+    .content-container { padding-top: 110px; }
+    .scroll-section { padding: 2rem 0; }
+  }
+</style>
+
+<script>
+  // Intersection Observer for scroll reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Project Modal logic
+  const modal = document.getElementById('project-modal');
+  const modalImg = document.getElementById('modal-img');
+  const modalTitle = document.getElementById('modal-title');
+  const modalSubtitle = document.getElementById('modal-subtitle');
+  const modalDescription = document.getElementById('modal-description');
+  const modalTags = document.getElementById('modal-tags');
+  const modalRepo = document.getElementById('modal-repo');
+  const modalDeploy = document.getElementById('modal-deploy');
+  const modalClose = document.getElementById('modal-close');
+
+  function openModal(project) {
+    modalImg.src = project.image || '/assets/project-placeholder.jpg';
+    modalImg.alt = project.name;
+    modalTitle.textContent = project.name;
+    modalSubtitle.textContent = project.subtitle;
+    modalDescription.textContent = project.description;
+
+    const stack = project.stack.flatMap(s => s.split(' '));
+    modalTags.innerHTML = stack.map(s => `<span class="tag">${s}</span>`).join('');
+
+    modalRepo.href = project.repository;
+
+    if (project.deploy) {
+      modalDeploy.style.display = '';
+      modalDeploy.href = project.deploy;
+    } else {
+      modalDeploy.style.display = 'none';
+    }
+
+    modal.style.display = '';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  window.addEventListener('open-project', (e) => {
+    openModal(e.detail);
+  });
+
+  modalClose.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display !== 'none') {
+      closeModal();
+    }
+  });
+</script>
