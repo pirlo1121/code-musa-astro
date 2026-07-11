@@ -108,7 +108,7 @@ import ProjectModal from '../components/ProjectModal.astro';
   const modalClose = document.getElementById('modal-close');
 
   function openModal(project) {
-    modalImg.src = project.image || '/assets/project-placeholder.jpg';
+    modalImg.src = project.image || '/assets/project-placeholder.svg';
     modalImg.alt = project.name;
     modalTitle.textContent = project.name;
     modalSubtitle.textContent = project.subtitle;

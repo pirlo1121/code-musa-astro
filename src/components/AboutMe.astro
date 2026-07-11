@@ -8,7 +8,7 @@ import { API_BASE_URL } from '../config';
   <div class="profile" id="profile-content" style="display:none">
     <img
       id="profile-img"
-      src="/assets/placeholder.jpg"
+      src="/assets/placeholder.svg"
       alt="Foto de perfil"
       class="profile-img"
       width="300"
@@ -184,7 +184,7 @@ import { API_BASE_URL } from '../config';
       const user = data.user;
       if (!user) throw new Error('no user');
 
-      profileImg.src = user.image || '/assets/placeholder.jpg';
+      profileImg.src = user.image || '/assets/placeholder.svg';
       profileImg.alt = `Foto de perfil de ${user.name}`;
       profileName.textContent     = user.name;
       profileProf.textContent     = user.profession;

@@ -1,5 +1,14 @@
 ---
 import '../styles/global.css';
+// Self-hosted via @fontsource — removes 2 external round-trips (fonts.googleapis.com +
+// fonts.gstatic.com) that a Google Fonts <link> would otherwise cost on every page load.
+// latin-only subset: site content is Spanish/English, no need to ship
+// cyrillic/greek/vietnamese @font-face declarations the page never uses.
+import '@fontsource/inter/latin-300.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
 
 interface Props {
   title?: string;
@@ -46,20 +55,13 @@ const canonical = siteURL;
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/fav.svg">
-    <link rel="apple-touch-icon"          href="/apple-touch-icon.png">
+    <!-- apple-touch-icon intentionally omitted: no 180x180 PNG asset exists yet.
+         A dead reference here costs iOS Safari an extra 404 request on every load.
+         Add public/apple-touch-icon.png and restore this tag when the asset is ready. -->
 
     <!-- Resource hints -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://api.code-musa.com">
     <link rel="preconnect" href="https://api.code-musa.com" crossorigin>
-
-    <!-- Fonts (non-blocking) -->
-    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    </noscript>
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap.xml">

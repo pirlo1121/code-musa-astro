@@ -222,7 +222,11 @@ import { API_BASE_URL } from '../config';
     border: 1px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-primary);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 500;
     background: transparent;
     font-family: var(--font-body);
@@ -362,7 +366,7 @@ import { API_BASE_URL } from '../config';
       grid.innerHTML = pageProjects.map((p, i) => `
         <div class="project-card" style="animation-delay:${i * 0.1}s">
           <img
-            src="${escapeAttr(p.image || '/assets/project-placeholder.jpg')}"
+            src="${escapeAttr(p.image || '/assets/project-placeholder.svg')}"
             alt="${escapeAttr(p.name)}"
             loading="lazy"
             decoding="async"

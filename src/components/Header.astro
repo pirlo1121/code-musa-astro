@@ -12,10 +12,10 @@
     </div>
 
     <ul class="nav-links">
-      <li><a data-scroll-to="about-me">About</a></li>
-      <li><a data-scroll-to="projects">Projects</a></li>
-      <li><a data-scroll-to="skills">Skills</a></li>
-      <li><a data-scroll-to="contact">Contact</a></li>
+      <li><a href="#about-me" data-scroll-to="about-me">About</a></li>
+      <li><a href="#projects" data-scroll-to="projects">Projects</a></li>
+      <li><a href="#skills" data-scroll-to="skills">Skills</a></li>
+      <li><a href="#contact" data-scroll-to="contact">Contact</a></li>
     </ul>
 
     <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
@@ -338,10 +338,11 @@
   }, { passive: true });
 
   document.querySelectorAll('[data-scroll-to]').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
       const target = el.getAttribute('data-scroll-to');
       const section = document.getElementById(target);
       if (section) {
+        e.preventDefault();
         section.scrollIntoView({ behavior: 'smooth' });
       }
     });
