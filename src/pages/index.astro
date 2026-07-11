@@ -47,8 +47,9 @@ import ProjectModal from '../components/ProjectModal.astro';
     justify-content: center;
     padding: 4rem 0;
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    transform: translateY(32px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform;
   }
 
@@ -69,16 +70,21 @@ import ProjectModal from '../components/ProjectModal.astro';
 </style>
 
 <script>
-  // Intersection Observer for scroll reveals
+  // Intersection Observer for scroll reveals (once pattern)
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+        // Free GPU memory after transition completes
+        entry.target.addEventListener('transitionend', () => {
+          entry.target.style.willChange = 'auto';
+        }, { once: true });
       }
     });
   }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -50px 0px'
+    threshold: 0.12,
+    rootMargin: '0px 0px -60px 0px'
   });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
@@ -118,8 +124,12 @@ import ProjectModal from '../components/ProjectModal.astro';
   }
 
   function closeModal() {
-    modal.style.display = 'none';
-    document.body.style.overflow = '';
+    modal.classList.add('closing');
+    modal.addEventListener('animationend', () => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing');
+      document.body.style.overflow = '';
+    }, { once: true });
   }
 
   window.addEventListener('open-project', (e) => {
@@ -129,13 +139,13 @@ import ProjectModal from '../components/ProjectModal.astro';
   modalClose.addEventListener('click', closeModal);
 
   modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
+    if (e.target === modal && !modal.classList.contains('closing')) {
       closeModal();
     }
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.style.display !== 'none') {
+    if (e.key === 'Escape' && modal.style.display !== 'none' && !modal.classList.contains('closing')) {
       closeModal();
     }
   });

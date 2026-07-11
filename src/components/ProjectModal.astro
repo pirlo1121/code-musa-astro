@@ -65,6 +65,15 @@
     z-index: 1050;
     padding: 1rem;
     animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: opacity;
+  }
+
+  .modal-backdrop.closing {
+    animation: fadeOut 0.22s ease-in forwards;
+  }
+
+  .modal-backdrop.closing .modal-container {
+    animation: slideDown 0.22s ease-in forwards;
   }
 
   .modal-container {
@@ -82,6 +91,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    will-change: transform, opacity;
   }
 
   body.dark-theme .modal-container {
@@ -209,7 +219,7 @@
     font-weight: 500;
     color: var(--text-secondary);
     border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
 
   .modal-backdrop .tags .tag:hover {
@@ -252,7 +262,7 @@
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
     color: var(--text-primary);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease-out, background 0.2s ease-out;
     font-weight: 600;
     font-family: var(--font-body);
     font-size: 0.95rem;
@@ -262,7 +272,7 @@
 
   .modal-backdrop .links .btn:hover {
     transform: translateY(-2px);
-    filter: brightness(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
 
   .modal-backdrop .links .btn svg { width: 20px; height: 20px; }

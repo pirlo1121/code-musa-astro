@@ -45,16 +45,17 @@ import { API_BASE_URL } from '../config';
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
-    width: 56px;
+    width: 80px;
     height: 3px;
     background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
     border-radius: 2px;
-    transition: width 0.3s ease-out;
+    transform: translateX(-50%) scaleX(0.7);
+    transform-origin: center;
+    transition: transform 0.3s ease-out;
   }
 
   .projects-container h2:hover::after {
-    width: 80px;
+    transform: translateX(-50%) scaleX(1);
   }
 
   body.dark-theme .projects-container h2 {
@@ -75,12 +76,13 @@ import { API_BASE_URL } from '../config';
     border-radius: 12px;
     overflow: hidden;
     box-shadow: var(--card-shadow);
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease-out;
     background: var(--surface-bg);
     display: flex;
     flex-direction: column;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    animation: card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   body.dark-theme .projects-container .project-card {
@@ -91,6 +93,7 @@ import { API_BASE_URL } from '../config';
   .projects-container .project-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--hover-shadow);
+    will-change: transform;
   }
 
   .projects-container .project-card img {
@@ -143,7 +146,7 @@ import { API_BASE_URL } from '../config';
     cursor: pointer;
     padding: 0.4rem 0;
     margin-bottom: 1rem;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
     font-family: var(--font-body);
   }
 
@@ -356,8 +359,8 @@ import { API_BASE_URL } from '../config';
       const pageProjects = projects.slice(startIndex, startIndex + itemsPerPage);
       const totalPages   = Math.ceil(projects.length / itemsPerPage);
 
-      grid.innerHTML = pageProjects.map(p => `
-        <div class="project-card">
+      grid.innerHTML = pageProjects.map((p, i) => `
+        <div class="project-card" style="animation-delay:${i * 0.1}s">
           <img
             src="${escapeAttr(p.image || '/assets/project-placeholder.jpg')}"
             alt="${escapeAttr(p.name)}"

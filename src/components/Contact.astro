@@ -55,16 +55,17 @@ import { API_BASE_URL } from '../config';
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
-    width: 56px;
+    width: 80px;
     height: 3px;
     background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
     border-radius: 2px;
-    transition: width 0.3s ease-out;
+    transform: translateX(-50%) scaleX(0.7);
+    transform-origin: center;
+    transition: transform 0.3s ease-out;
   }
 
   h2:hover::after {
-    width: 80px;
+    transform: translateX(-50%) scaleX(1);
   }
 
   body.dark-theme h2 {
