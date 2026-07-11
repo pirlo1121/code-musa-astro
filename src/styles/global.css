@@ -375,3 +375,14 @@ body.dark-theme .text-glow {
     animation: none !important;
   }
 }
+
+.starfield,
+.star-layer-1,
+.star-layer-2,
+.star-layer-3 {
+  will-change: auto;
+}
+
+body:not(.dark-theme) .starfield {
+  will-change: auto;
+}
