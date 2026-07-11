@@ -19,20 +19,22 @@
     </ul>
 
     <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
-      <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-      <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>
+      <span class="theme-icon-wrap" aria-hidden="true">
+        <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </span>
     </button>
   </nav>
 </header>
@@ -127,6 +129,8 @@
     transition: color 0.15s ease-out;
     padding: 0.25rem 0;
     position: relative;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .nav-links a::after {
@@ -172,21 +176,63 @@
     justify-content: center;
     padding: 0.5rem;
     border-radius: 50%;
-    transition: background-color 0.15s ease-out, transform 0.15s ease-out;
+    transition: background-color 0.2s ease-out;
     flex-shrink: 0;
+    /* Eliminate 300ms tap delay on mobile */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
   }
 
   .theme-btn:hover {
     background: rgba(255, 255, 255, 0.1);
-    transform: rotate(15deg);
+  }
+
+  .theme-btn:active {
+    transform: scale(0.88);
   }
 
   body:not(.dark-theme) .theme-btn {
-    color: #000000;
+    color: #1f2328;
   }
 
   body:not(.dark-theme) .theme-btn:hover {
     background: rgba(0, 0, 0, 0.06);
+  }
+
+  /* Icon crossfade — no JS display toggling, no reflow */
+  .theme-icon-wrap {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .theme-icon-wrap svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  /* Dark mode: moon visible, sun hidden */
+  #moon-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  #sun-icon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
+  /* Light mode: sun visible, moon hidden */
+  body:not(.dark-theme) #moon-icon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+  body:not(.dark-theme) #sun-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
   }
 
   @media (max-width: 768px) {
@@ -262,34 +308,14 @@
 </style>
 
 <script>
-  const header = document.getElementById('site-header');
-  const themeToggle = document.getElementById('theme-toggle');
-  const moonIcon = document.getElementById('moon-icon');
-  const sunIcon = document.getElementById('sun-icon');
+  const header       = document.getElementById('site-header');
+  const themeToggle  = document.getElementById('theme-toggle');
 
   let lastScrollY = 0;
-  let isDark = document.body.classList.contains('dark-theme');
-
-  function updateIcons() {
-    if (isDark) {
-      moonIcon.style.display = '';
-      sunIcon.style.display = 'none';
-    } else {
-      moonIcon.style.display = 'none';
-      sunIcon.style.display = '';
-    }
-  }
-  updateIcons();
 
   themeToggle.addEventListener('click', () => {
-    isDark = !isDark;
+    const isDark = document.body.classList.toggle('dark-theme');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    if (isDark) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
-    updateIcons();
   });
 
   let rafId = 0;

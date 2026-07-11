@@ -9,13 +9,15 @@ import { API_BASE_URL } from '../config';
     <img
       id="profile-img"
       src="/assets/placeholder.jpg"
-      alt=""
+      alt="Foto de perfil"
       class="profile-img"
       width="300"
       height="300"
+      decoding="async"
+      fetchpriority="high"
     />
-    <h2 id="profile-name"></h2>
-    <h3 id="profile-profession"></h3>
+    <h1 id="profile-name"></h1>
+    <h2 id="profile-profession"></h2>
     <p class="bio" id="profile-bio"></p>
     <div class="social-links" id="profile-social">
       <a id="profile-github" href="#" target="_blank" rel="noopener noreferrer" style="display:none">GitHub</a>
@@ -67,18 +69,18 @@ import { API_BASE_URL } from '../config';
     animation: float-hero 8s ease-in-out infinite;
   }
 
-  h2 {
+  h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
     color: var(--text-color);
     transition: text-shadow 0.15s ease-out, color 0.15s ease-out;
   }
 
-  body.dark-theme h2 {
+  body.dark-theme h1 {
     text-shadow: 0 0 10px var(--accent-glow);
   }
 
-  h3 {
+  h2 {
     font-size: 1.5rem;
     color: var(--accent-primary);
     font-weight: bold;
@@ -144,15 +146,15 @@ import { API_BASE_URL } from '../config';
 
   @media (max-width: 768px) {
     .about-me-container { padding: 0 1.5rem; }
-    h2 { font-size: 2rem; }
-    h3 { font-size: 1rem; }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1rem; }
     .bio { font-size: 1rem; max-width: 100%; }
   }
 
   @media (max-width: 480px) {
     .about-me-container { padding: 0 1rem; }
     .profile-img { width: 250px; height: 250px; }
-    h2 { font-size: 1.75rem; }
+    h1 { font-size: 1.75rem; }
     .social-links a { padding: 0.5rem 1rem; font-size: 0.9rem; }
   }
 </style>
@@ -169,12 +171,21 @@ import { API_BASE_URL } from '../config';
     const profileLoading  = document.getElementById('profile-loading');
 
     try {
-      const res  = await fetch(`${API_BASE_URL}/get/696c287de69192f9b00097c6`);
-      const data = await res.json();
+      const CACHE_KEY = 'pf_user_v1';
+      let data;
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        data = JSON.parse(cached);
+      } else {
+        const res = await fetch(`${API_BASE_URL}/get/696c287de69192f9b00097c6`);
+        data = await res.json();
+        if (data.user) sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      }
       const user = data.user;
+      if (!user) throw new Error('no user');
 
       profileImg.src = user.image || '/assets/placeholder.jpg';
-      profileImg.alt = user.name;
+      profileImg.alt = `Foto de perfil de ${user.name}`;
       profileName.textContent     = user.name;
       profileProf.textContent     = user.profession;
       profileBio.textContent      = user.bio || '';

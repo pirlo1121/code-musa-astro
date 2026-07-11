@@ -58,6 +58,13 @@ import ProjectModal from '../components/ProjectModal.astro';
     transform: translateY(0);
   }
 
+  /* Skip rendering off-screen sections until they approach the viewport.
+     Reduces initial paint time and main-thread work for below-fold content. */
+  #projects, #skills, #contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 700px;
+  }
+
   @media (max-width: 768px) {
     .content-container { padding-top: 120px; }
     .scroll-section { padding: 3rem 0; min-height: 50vh; }

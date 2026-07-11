@@ -80,9 +80,8 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-color);
   line-height: var(--line-height-base);
-  transition: background-color var(--transition-speed) var(--transition-ease),
-    color var(--transition-speed) var(--transition-ease);
-  will-change: background-color, color;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-x: hidden;
   min-height: 100vh;
   position: relative;
@@ -406,8 +405,13 @@ body.dark-theme .text-glow {
   will-change: transform;
 }
 
+/* Pause all star/comet animations in light mode — they're invisible (opacity:0)
+   but still consume GPU cycles without this rule. */
 body:not(.dark-theme) .star-layer-1,
 body:not(.dark-theme) .star-layer-2,
-body:not(.dark-theme) .star-layer-3 {
+body:not(.dark-theme) .star-layer-3,
+body:not(.dark-theme) .comet-primary,
+body:not(.dark-theme) .comet-secondary {
+  animation-play-state: paused;
   will-change: auto;
 }

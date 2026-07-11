@@ -2,33 +2,87 @@
 import '../styles/global.css';
 
 interface Props {
-  title: string;
+  title?: string;
+  description?: string;
+  ogImage?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title       = "Maicol Bautista – Software Developer",
+  description = "Portfolio de Maicol Bautista, desarrollador de software especializado en TypeScript, Angular, Astro y Node.js. Proyectos, habilidades y contacto.",
+  ogImage     = "/assets/og-image.jpg",
+} = Astro.props;
+
+const siteURL   = "https://code-musa.com";
+const canonical = siteURL;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8">
-    <title>{title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Primary meta -->
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="author" content="Maicol Bautista">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href={canonical}>
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content={canonical}>
+    <meta property="og:title"       content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image"       content={`${siteURL}${ogImage}`}>
+    <meta property="og:locale"      content="es_CO">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image"       content={`${siteURL}${ogImage}`}>
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/fav.svg">
+    <link rel="apple-touch-icon"          href="/apple-touch-icon.png">
+
+    <!-- Resource hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="dns-prefetch" href="https://api.code-musa.com">
+    <link rel="preconnect" href="https://api.code-musa.com" crossorigin>
+
+    <!-- Fonts (non-blocking) -->
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     </noscript>
-    <link rel="dns-prefetch" href="https://code-musa.com">
-    <link rel="icon" type="image/svg+xml" href="/fav.svg">
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap.xml">
+
+    <!-- JSON-LD structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Maicol Bautista",
+        "url": "https://code-musa.com",
+        "jobTitle": "Software Developer",
+        "knowsAbout": ["TypeScript", "Angular", "Astro", "Node.js", "MongoDB", "Docker", "Python"],
+        "image": "https://code-musa.com/assets/profile.jpg",
+        "sameAs": []
+      }
+    </script>
   </head>
   <body class="dark-theme">
+    <!-- Blocking theme restore — runs before first paint to prevent FOUC -->
     <script>
       (function() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
+        if (localStorage.getItem('theme') === 'light') {
           document.body.classList.remove('dark-theme');
         }
       })();

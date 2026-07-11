@@ -365,8 +365,9 @@ import { API_BASE_URL } from '../config';
             src="${escapeAttr(p.image || '/assets/project-placeholder.jpg')}"
             alt="${escapeAttr(p.name)}"
             loading="lazy"
+            decoding="async"
             width="400"
-            height="250"
+            height="200"
           >
           <div class="card-content">
             <h3>${escapeAttr(p.name)}</h3>
@@ -436,8 +437,16 @@ import { API_BASE_URL } from '../config';
     });
 
     try {
-      const res  = await fetch(`${API_BASE_URL}/projects`);
-      const data = await res.json();
+      const CACHE_KEY = 'pf_projects_v1';
+      let data;
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        data = JSON.parse(cached);
+      } else {
+        const res = await fetch(`${API_BASE_URL}/projects`);
+        data = await res.json();
+        if (data.ok) sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      }
 
       if (data.ok) {
         projects = data.projects.map(p => ({
