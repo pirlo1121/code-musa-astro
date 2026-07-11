@@ -75,9 +75,28 @@ const skills = [
 
   h2 {
     font-size: 2.5rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
     text-align: center;
     transition: text-shadow 0.15s ease-out, color 0.15s ease-out;
+    position: relative;
+    padding-bottom: 1rem;
+  }
+
+  h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 2px;
+    transition: width 0.3s ease-out;
+  }
+
+  h2:hover::after {
+    width: 80px;
   }
 
   body.dark-theme h2 {
@@ -198,7 +217,7 @@ const skills = [
   @media (max-width: 480px) {
     .skills-container { padding: 0 1rem; }
     h2 { font-size: 1.75rem; }
-    .skills-grid { grid-template-columns: repeat(3, 1fr); gap: 0.65rem; }
+    .skills-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 0.65rem; }
     .skill-card { padding: 1rem 0.4rem; border-radius: 12px; }
     .skill-card::before { border-radius: 12px; }
     .skill-icon { width: 1.6rem; height: 1.6rem; }

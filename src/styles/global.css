@@ -24,8 +24,11 @@
   --footer-bg: #EBEAE4;
   --footer-text: #2C2420;
 
-  --card-shadow: 0 2px 4px rgba(44, 36, 32, 0.05);
-  --hover-shadow: 0 8px 16px rgba(44, 36, 32, 0.08);
+  --card-shadow: 0 2px 8px rgba(44, 36, 32, 0.10), 0 1px 3px rgba(44, 36, 32, 0.06);
+  --hover-shadow: 0 8px 24px rgba(44, 36, 32, 0.14), 0 2px 8px rgba(44, 36, 32, 0.08);
+
+  --color-success: #16a34a;
+  --color-error: #dc2626;
 
   --font-display: 'Inter', 'Georgia', serif;
   --font-body: 'Inter', system-ui, sans-serif;
