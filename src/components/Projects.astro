@@ -1,4 +1,8 @@
-<section id="projects" class="projects-container">
+---
+import { API_BASE_URL } from '../config';
+---
+
+<section class="projects-container">
   <h2>My Projects</h2>
   <div id="projects-grid" class="projects-grid">
     <p>Loading projects...</p>
@@ -283,7 +287,7 @@
   }
 </style>
 
-<script>
+<script define:vars={{ API_BASE_URL }}>
   (async function() {
     const grid = document.getElementById('projects-grid');
     const pagination = document.getElementById('pagination-controls');
@@ -368,7 +372,7 @@
     });
 
     try {
-      const res = await fetch('https://api.code-musa.com/api/projects');
+      const res = await fetch(`${API_BASE_URL}/projects`);
       const data = await res.json();
 
       if (data.ok) {

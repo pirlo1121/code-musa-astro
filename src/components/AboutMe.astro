@@ -1,3 +1,7 @@
+---
+import { API_BASE_URL } from '../config';
+---
+
 <section class="about-me-container">
   <div id="profile-content">
     <p>Loading profile...</p>
@@ -17,11 +21,6 @@
     transition: background-color 0.15s ease-out;
     position: relative;
     z-index: 1;
-    opacity: 0;
-  }
-
-  .about-me-container.active {
-    opacity: 1;
   }
 
   .profile-img {
@@ -100,7 +99,6 @@
   }
 
   body.dark-theme .social-links a {
-    border-radius: 8px;
     border-color: var(--accent-primary);
     color: var(--accent-primary);
   }
@@ -134,30 +132,75 @@
   }
 </style>
 
-<script>
-  (async function() {
+<script define:vars={{ API_BASE_URL }}>
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  (async function () {
     const container = document.getElementById('profile-content');
 
     try {
-      const res = await fetch('https://api.code-musa.com/api/get/696c287de69192f9b00097c6');
+      const res = await fetch(`${API_BASE_URL}/get/696c287de69192f9b00097c6`);
       const data = await res.json();
       const user = data.user;
 
-      container.innerHTML = `
-        <div class="profile">
-          <img src="${user.image || '/assets/placeholder.jpg'}" alt="${user.name}" class="profile-img" width="200" height="200">
-          <h2>${user.name}</h2>
-          <h3>${user.profession}</h3>
-          <p class="bio">${user.bio || ''}</p>
-          <div class="social-links">
-            ${user.socialLinks?.github ? '<a href="' + user.socialLinks.github + '" target="_blank">GitHub</a>' : ''}
-            ${user.socialLinks?.linkedin ? '<a href="' + user.socialLinks.linkedin + '" target="_blank">LinkedIn</a>' : ''}
-          </div>
-        </div>
-      `;
+      const img = document.createElement('img');
+      img.src = user.image || '/assets/placeholder.jpg';
+      img.alt = escapeHtml(user.name);
+      img.className = 'profile-img';
+      img.width = 300;
+      img.height = 300;
+
+      const h2 = document.createElement('h2');
+      h2.textContent = user.name;
+
+      const h3 = document.createElement('h3');
+      h3.textContent = user.profession;
+
+      const bio = document.createElement('p');
+      bio.className = 'bio';
+      bio.textContent = user.bio || '';
+
+      const socialLinks = document.createElement('div');
+      socialLinks.className = 'social-links';
+
+      if (user.socialLinks?.github) {
+        const a = document.createElement('a');
+        a.href = user.socialLinks.github;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = 'GitHub';
+        socialLinks.appendChild(a);
+      }
+
+      if (user.socialLinks?.linkedin) {
+        const a = document.createElement('a');
+        a.href = user.socialLinks.linkedin;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = 'LinkedIn';
+        socialLinks.appendChild(a);
+      }
+
+      const profile = document.createElement('div');
+      profile.className = 'profile';
+      profile.appendChild(img);
+      profile.appendChild(h2);
+      profile.appendChild(h3);
+      profile.appendChild(bio);
+      if (socialLinks.children.length > 0) {
+        profile.appendChild(socialLinks);
+      }
+
+      container.replaceChildren(profile);
     } catch (err) {
       console.error('Error loading user', err);
-      container.innerHTML = '<p>Failed to load profile.</p>';
+      container.textContent = 'Failed to load profile.';
     }
   })();
 </script>

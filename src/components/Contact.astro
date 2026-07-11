@@ -1,4 +1,8 @@
-<section id="contact" class="contact-container">
+---
+import { API_BASE_URL } from '../config';
+---
+
+<section class="contact-container">
   <h2>Contact Me</h2>
   <form id="contact-form" class="contact-form">
     <div class="form-group">
@@ -156,7 +160,7 @@
   }
 </style>
 
-<script>
+<script define:vars={{ API_BASE_URL }}>
   document.getElementById('contact-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -176,7 +180,7 @@
     errorEl.style.display = 'none';
 
     try {
-      const res = await fetch('https://api.code-musa.com/api/contact', {
+      const res = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message })
