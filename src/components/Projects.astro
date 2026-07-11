@@ -1,18 +1,106 @@
 ---
-import { API_BASE_URL } from '../config';
+import { Image, getImage } from 'astro:assets';
+import { getProjects } from '../lib/data';
+
+const projects = await getProjects();
+const PAGE_SIZE = 3;
+const totalPages = Math.ceil(projects.length / PAGE_SIZE);
+
+// Pre-optimize a larger variant for the modal too, so it never falls back to
+// the raw, unresized S3 original when a card is opened.
+const modalImages: Record<string, string> = {};
+for (const p of projects) {
+  if (!p.image) continue;
+  const optimized = await getImage({ src: p.image, width: 800, height: 350 });
+  modalImages[p._id] = optimized.src;
+}
+
+// Only what the client-side modal actually reads — no raw S3 URLs shipped.
+const projectsForClient = projects.map(p => ({
+  _id: p._id,
+  name: p.name,
+  description: p.description,
+  stack: p.stack,
+  repository: p.repository,
+  deploy: p.deploy,
+  modalImage: modalImages[p._id] ?? '/assets/project-placeholder.svg',
+}));
 ---
 
 <section class="projects-container">
   <h2>My Projects</h2>
-  <div id="projects-grid" class="projects-grid">
-    <p>Loading projects...</p>
-  </div>
 
-  <div id="pagination-controls" class="pagination-controls" style="display:none">
-    <button id="prev-page" class="btn-nav">Previous</button>
-    <span id="page-indicator" class="page-indicator"></span>
-    <button id="next-page" class="btn-nav">Next</button>
-  </div>
+  {projects.length === 0 ? (
+    <p>No projects found.</p>
+  ) : (
+    <Fragment>
+    <div id="projects-grid" class="projects-grid">
+      {projects.map((p, i) => (
+        <div class="project-card" data-page={Math.floor(i / PAGE_SIZE)} style={i >= PAGE_SIZE ? { display: 'none' } : undefined}>
+          {p.image ? (
+            <Image src={p.image} alt={p.name} width={400} height={200} loading="lazy" decoding="async" />
+          ) : (
+            <img src="/assets/project-placeholder.svg" alt={p.name} width="400" height="200" loading="lazy" decoding="async" />
+          )}
+          <div class="card-content">
+            <h3>{p.name}</h3>
+
+            <button class="read-more" data-project-id={p._id}>
+              Ver más
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+              </svg>
+            </button>
+
+            {p.stack && p.stack.length > 0 && (
+              <div class="card-tags">
+                {p.stack.slice(0, 4).map(t => <span class="tag">{t}</span>)}
+              </div>
+            )}
+
+            <div class="card-divider"></div>
+
+            <div class="links">
+              <a href={p.repository} target="_blank" rel="noopener noreferrer" class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
+                    0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
+                    -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
+                    .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.381 1.236-3.221
+                    -.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404
+                    1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176
+                    .77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222
+                    v3.293c0 .319.192.694.801.576C20.565 21.796 24 17.3 24 12c0-6.63-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+              {p.deploy && (
+                <a href={p.deploy} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                  Live
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <div id="pagination-controls" class="pagination-controls">
+        <button id="prev-page" class="btn-nav" disabled>Previous</button>
+        <span id="page-indicator" class="page-indicator">Page 1 of {totalPages}</span>
+        <button id="next-page" class="btn-nav">Next</button>
+      </div>
+    )}
+    </Fragment>
+  )}
 </section>
 
 <!-- is:global so styles apply to dynamically rendered cards -->
@@ -342,129 +430,41 @@ import { API_BASE_URL } from '../config';
   }
 </style>
 
-<script define:vars={{ API_BASE_URL }}>
-  (async function () {
-    const grid          = document.getElementById('projects-grid');
-    const pagination    = document.getElementById('pagination-controls');
-    const prevBtn       = document.getElementById('prev-page');
-    const nextBtn       = document.getElementById('next-page');
+<script define:vars={{ projects: projectsForClient, PAGE_SIZE }}>
+  const grid = document.getElementById('projects-grid');
+  if (grid) {
+    const cards       = Array.from(grid.querySelectorAll('.project-card'));
+    const pagination  = document.getElementById('pagination-controls');
+    const prevBtn     = document.getElementById('prev-page');
+    const nextBtn     = document.getElementById('next-page');
     const pageIndicator = document.getElementById('page-indicator');
-
-    let projects    = [];
-    let currentPage = 1;
-    const itemsPerPage = 3;
-
-    function escapeAttr(str) {
-      return String(str).replace(/"/g, '&quot;').replace(/</g, '&lt;');
-    }
+    const totalPages  = Math.ceil(projects.length / PAGE_SIZE);
+    let currentPage   = 0;
 
     function renderPage() {
-      const startIndex   = (currentPage - 1) * itemsPerPage;
-      const pageProjects = projects.slice(startIndex, startIndex + itemsPerPage);
-      const totalPages   = Math.ceil(projects.length / itemsPerPage);
-
-      grid.innerHTML = pageProjects.map((p, i) => `
-        <div class="project-card" style="animation-delay:${i * 0.1}s">
-          <img
-            src="${escapeAttr(p.image || '/assets/project-placeholder.svg')}"
-            alt="${escapeAttr(p.name)}"
-            loading="lazy"
-            decoding="async"
-            width="400"
-            height="200"
-          >
-          <div class="card-content">
-            <h3>${escapeAttr(p.name)}</h3>
-
-            <button class="read-more" data-project-id="${escapeAttr(p._id)}">
-              Ver más
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-              </svg>
-            </button>
-            ${p.stack && p.stack.length > 0 ? `
-            <div class="card-tags">
-              ${p.stack.slice(0, 4).map(t => `<span class="tag">${escapeAttr(t)}</span>`).join('')}
-            </div>` : ''}
-            <div class="card-divider"></div>
-            <div class="links">
-              <a href="${escapeAttr(p.repository)}" target="_blank" rel="noopener noreferrer" class="btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
-                    0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
-                    -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
-                    .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.381 1.236-3.221
-                    -.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404
-                    1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176
-                    .77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222
-                    v3.293c0 .319.192.694.801.576C20.565 21.796 24 17.3 24 12c0-6.63-5.373-12-12-12z"/>
-                </svg>
-                GitHub
-              </a>
-              ${p.deploy ? `
-              <a href="${escapeAttr(p.deploy)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                  <polyline points="15 3 21 3 21 9"/>
-                  <line x1="10" y1="14" x2="21" y2="3"/>
-                </svg>
-                Live
-              </a>` : ''}
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
-      prevBtn.disabled = currentPage === 1;
-      nextBtn.disabled = currentPage === totalPages;
-
-      grid.querySelectorAll('.read-more').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const project = projects.find(p => p._id === btn.dataset.projectId);
-          if (project) {
-            window.dispatchEvent(new CustomEvent('open-project', { detail: project }));
-          }
-        });
+      cards.forEach(card => {
+        card.style.display = Number(card.dataset.page) === currentPage ? '' : 'none';
       });
+      if (pageIndicator) pageIndicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = currentPage === 0;
+      if (nextBtn) nextBtn.disabled = currentPage === totalPages - 1;
     }
 
-    prevBtn.addEventListener('click', () => {
-      if (currentPage > 1) { currentPage--; renderPage(); }
+    prevBtn?.addEventListener('click', () => {
+      if (currentPage > 0) { currentPage--; renderPage(); }
     });
 
-    nextBtn.addEventListener('click', () => {
-      const totalPages = Math.ceil(projects.length / itemsPerPage);
-      if (currentPage < totalPages) { currentPage++; renderPage(); }
+    nextBtn?.addEventListener('click', () => {
+      if (currentPage < totalPages - 1) { currentPage++; renderPage(); }
     });
 
-    try {
-      const CACHE_KEY = 'pf_projects_v1';
-      let data;
-      const cached = sessionStorage.getItem(CACHE_KEY);
-      if (cached) {
-        data = JSON.parse(cached);
-      } else {
-        const res = await fetch(`${API_BASE_URL}/projects`);
-        data = await res.json();
-        if (data.ok) sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-      }
-
-      if (data.ok) {
-        projects = data.projects.map(p => ({
-          ...p,
-          stack: p.stack.flatMap(s => s.split(' '))
-        }));
-        renderPage();
-        if (projects.length > itemsPerPage) pagination.style.display = '';
-      } else {
-        grid.innerHTML = '<p>No projects found.</p>';
-      }
-    } catch (err) {
-      console.error('Error loading projects:', err);
-      grid.innerHTML = '<p>Failed to load projects.</p>';
-    }
-  })();
+    grid.querySelectorAll('.read-more').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const project = projects.find(p => p._id === btn.dataset.projectId);
+        if (project) {
+          window.dispatchEvent(new CustomEvent('open-project', { detail: project }));
+        }
+      });
+    });
+  }
 </script>

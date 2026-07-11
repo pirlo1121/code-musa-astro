@@ -2,9 +2,9 @@
 import '../styles/global.css';
 // Self-hosted via @fontsource — removes 2 external round-trips (fonts.googleapis.com +
 // fonts.gstatic.com) that a Google Fonts <link> would otherwise cost on every page load.
-// latin-only subset: site content is Spanish/English, no need to ship
-// cyrillic/greek/vietnamese @font-face declarations the page never uses.
-import '@fontsource/inter/latin-300.css';
+// latin-only subset (no cyrillic/greek/vietnamese), and only the 4 weights the
+// CSS actually requests (400 default body text, 500/600/700 explicit — 300 is
+// never used anywhere in the project).
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import '@fontsource/inter/latin-600.css';

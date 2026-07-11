@@ -1,29 +1,51 @@
 ---
-import { API_BASE_URL } from '../config';
+import { Image } from 'astro:assets';
+import { getProfile } from '../lib/data';
+
+const user = await getProfile();
 ---
 
 <section class="about-me-container">
-  <p class="loading-text" id="profile-loading">Loading profile...</p>
-
-  <div class="profile" id="profile-content" style="display:none">
-    <img
-      id="profile-img"
-      src="/assets/placeholder.svg"
-      alt="Foto de perfil"
-      class="profile-img"
-      width="300"
-      height="300"
-      decoding="async"
-      fetchpriority="high"
-    />
-    <h1 id="profile-name"></h1>
-    <h2 id="profile-profession"></h2>
-    <p class="bio" id="profile-bio"></p>
-    <div class="social-links" id="profile-social">
-      <a id="profile-github" href="#" target="_blank" rel="noopener noreferrer" style="display:none">GitHub</a>
-      <a id="profile-linkedin" href="#" target="_blank" rel="noopener noreferrer" style="display:none">LinkedIn</a>
+  {user ? (
+    <div class="profile">
+      {user.image ? (
+        <Image
+          src={user.image}
+          alt={`Foto de perfil de ${user.name}`}
+          width={300}
+          height={300}
+          class="profile-img"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      ) : (
+        <img
+          src="/assets/placeholder.svg"
+          alt="Foto de perfil"
+          class="profile-img"
+          width="300"
+          height="300"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      )}
+      <h1>{user.name}</h1>
+      <h2>{user.profession}</h2>
+      <p class="bio">{user.bio}</p>
+      <div class="social-links">
+        {user.socialLinks?.github && (
+          <a href={user.socialLinks.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+        )}
+        {user.socialLinks?.linkedin && (
+          <a href={user.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        )}
+      </div>
     </div>
-  </div>
+  ) : (
+    <p class="loading-text">Failed to load profile.</p>
+  )}
 </section>
 
 <style>
@@ -158,52 +180,3 @@ import { API_BASE_URL } from '../config';
     .social-links a { padding: 0.5rem 1rem; font-size: 0.9rem; }
   }
 </style>
-
-<script define:vars={{ API_BASE_URL }}>
-  (async function () {
-    const profileImg      = document.getElementById('profile-img');
-    const profileName     = document.getElementById('profile-name');
-    const profileProf     = document.getElementById('profile-profession');
-    const profileBio      = document.getElementById('profile-bio');
-    const profileGithub   = document.getElementById('profile-github');
-    const profileLinkedin = document.getElementById('profile-linkedin');
-    const profileContent  = document.getElementById('profile-content');
-    const profileLoading  = document.getElementById('profile-loading');
-
-    try {
-      const CACHE_KEY = 'pf_user_v1';
-      let data;
-      const cached = sessionStorage.getItem(CACHE_KEY);
-      if (cached) {
-        data = JSON.parse(cached);
-      } else {
-        const res = await fetch(`${API_BASE_URL}/get/696c287de69192f9b00097c6`);
-        data = await res.json();
-        if (data.user) sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-      }
-      const user = data.user;
-      if (!user) throw new Error('no user');
-
-      profileImg.src = user.image || '/assets/placeholder.svg';
-      profileImg.alt = `Foto de perfil de ${user.name}`;
-      profileName.textContent     = user.name;
-      profileProf.textContent     = user.profession;
-      profileBio.textContent      = user.bio || '';
-
-      if (user.socialLinks?.github) {
-        profileGithub.href         = user.socialLinks.github;
-        profileGithub.style.display = '';
-      }
-      if (user.socialLinks?.linkedin) {
-        profileLinkedin.href         = user.socialLinks.linkedin;
-        profileLinkedin.style.display = '';
-      }
-
-      profileLoading.style.display  = 'none';
-      profileContent.style.display  = '';
-    } catch (err) {
-      console.error('Error loading user:', err);
-      profileLoading.textContent = 'Failed to load profile.';
-    }
-  })();
-</script>

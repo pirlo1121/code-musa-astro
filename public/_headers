@@ -1,0 +1,26 @@
+# Netlify / Cloudflare Pages header convention. If deploying to a plain
+# nginx/Apache host instead, mirror these rules in the server config —
+# see the audit report for the nginx equivalent.
+
+# Hashed, content-addressed build assets (JS, inlined-CSS-referenced fonts,
+# optimized images) never change contents under the same URL — cache forever.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The HTML entrypoint must always be revalidated so deploys show up immediately.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Static, unhashed files in /public — short cache, still revalidated often
+# enough to pick up manual updates without needing a cache-buster.
+/*.svg
+  Cache-Control: public, max-age=86400
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400
