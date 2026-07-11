@@ -1,7 +1,8 @@
 <div id="project-modal" class="modal-backdrop" style="display:none" role="dialog" aria-modal="true">
   <div class="modal-container">
     <button class="close-btn" id="modal-close" aria-label="Cerrar modal">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
@@ -20,17 +21,25 @@
         <div id="modal-tags" class="tags"></div>
 
         <div class="links">
-          <a id="modal-repo" href="#" target="_blank" class="btn">
+          <a id="modal-repo" href="#" target="_blank" rel="noopener noreferrer" class="btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
+                0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
+                -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
+                .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225
+                -.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405
+                c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225
+                0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576
+                C20.565 21.796 24 17.3 24 12c0-6.63-5.373-12-12-12z"/>
             </svg>
             GitHub
           </a>
-          <a id="modal-deploy" href="#" target="_blank" class="btn btn-primary" style="display:none">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
+          <a id="modal-deploy" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
             Live
           </a>
@@ -40,7 +49,8 @@
   </div>
 </div>
 
-<style>
+<!-- is:global so styles apply to dynamically created .tag elements -->
+<style is:global>
   .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -65,7 +75,9 @@
     max-height: 90dvh;
     background: var(--surface-bg, #ffffff);
     border-radius: 16px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 8px 10px -6px rgba(0, 0, 0, 0.1);
     animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     overflow: hidden;
     display: flex;
@@ -75,10 +87,12 @@
   body.dark-theme .modal-container {
     background: rgba(17, 24, 39, 0.98);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
   }
 
-  .close-btn {
+  .modal-backdrop .close-btn {
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -98,24 +112,27 @@
     padding: 0;
   }
 
-  .close-btn:hover {
+  .modal-backdrop .close-btn:hover {
     background: rgba(255, 255, 255, 0.9);
     color: black;
     transform: rotate(90deg) scale(1.1);
   }
 
-  .modal-content {
+  .modal-backdrop .modal-content {
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
   }
 
-  .modal-content::-webkit-scrollbar { width: 6px; }
-  .modal-content::-webkit-scrollbar-track { background: transparent; }
-  .modal-content::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 20px; }
+  .modal-backdrop .modal-content::-webkit-scrollbar { width: 6px; }
+  .modal-backdrop .modal-content::-webkit-scrollbar-track { background: transparent; }
+  .modal-backdrop .modal-content::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 20px;
+  }
 
-  .modal-image {
+  .modal-backdrop .modal-image {
     position: relative;
     width: 100%;
     height: 350px;
@@ -123,7 +140,7 @@
     background-color: var(--bg-secondary);
   }
 
-  .modal-image img {
+  .modal-backdrop .modal-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -134,11 +151,11 @@
     transform: scale(1.05);
   }
 
-  .modal-body {
+  .modal-backdrop .modal-body {
     padding: 2rem 2.5rem;
   }
 
-  h2 {
+  .modal-backdrop h2 {
     margin: 0 0 0.5rem 0;
     font-size: 2rem;
     line-height: 1.2;
@@ -148,12 +165,12 @@
     letter-spacing: -0.02em;
   }
 
-  body.dark-theme h2 {
+  body.dark-theme .modal-backdrop h2 {
     color: #f3f4f6;
     text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
 
-  .subtitle {
+  .modal-backdrop .subtitle {
     font-size: 1.125rem;
     color: var(--accent-primary);
     margin: 0 0 1.5rem 0;
@@ -161,11 +178,11 @@
     opacity: 0.9;
   }
 
-  body.dark-theme .subtitle {
+  body.dark-theme .modal-backdrop .subtitle {
     color: var(--accent-secondary);
   }
 
-  .description {
+  .modal-backdrop .description {
     font-size: 1.05rem;
     color: var(--text-secondary);
     line-height: 1.75;
@@ -173,18 +190,18 @@
     max-width: 65ch;
   }
 
-  body.dark-theme .description {
+  body.dark-theme .modal-backdrop .description {
     color: #9ca3af;
   }
 
-  .tags {
+  .modal-backdrop .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-bottom: 2rem;
   }
 
-  .tags .tag {
+  .modal-backdrop .tags .tag {
     background: var(--bg-secondary);
     padding: 0.4rem 1rem;
     border-radius: 9999px;
@@ -195,13 +212,23 @@
     transition: all 0.2s ease;
   }
 
-  body.dark-theme .tags .tag {
+  .modal-backdrop .tags .tag:hover {
+    transform: translateY(-2px);
+    border-color: var(--text-primary);
+  }
+
+  body.dark-theme .modal-backdrop .tags .tag {
     background: rgba(139, 92, 246, 0.1);
     color: #ddd6fe;
     border-color: rgba(139, 92, 246, 0.2);
   }
 
-  .links {
+  body.dark-theme .modal-backdrop .tags .tag:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.4);
+  }
+
+  .modal-backdrop .links {
     display: flex;
     justify-content: space-around;
     gap: 1rem;
@@ -211,11 +238,11 @@
     border-top: 1px solid var(--border-color);
   }
 
-  body.dark-theme .links {
+  body.dark-theme .modal-backdrop .links {
     border-color: rgba(255, 255, 255, 0.1);
   }
 
-  .links .btn {
+  .modal-backdrop .links .btn {
     display: inline-flex;
     max-width: 35%;
     align-items: center;
@@ -233,45 +260,71 @@
     border: 1px solid transparent;
   }
 
-  .links .btn:hover {
+  .modal-backdrop .links .btn:hover {
     transform: translateY(-2px);
     filter: brightness(1.05);
   }
 
-  .links .btn svg { width: 20px; height: 20px; }
+  .modal-backdrop .links .btn svg { width: 20px; height: 20px; }
 
-  .links .btn-primary {
+  .modal-backdrop .links .btn-primary {
     background: var(--text-primary);
     color: var(--bg-primary);
   }
 
-  body.dark-theme .links .btn {
+  body.dark-theme .modal-backdrop .links .btn {
     background: rgba(255, 255, 255, 0.05);
     color: #e5e7eb;
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  body.dark-theme .links .btn-primary {
+  body.dark-theme .modal-backdrop .links .btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  body.dark-theme .modal-backdrop .links .btn-primary {
     background: linear-gradient(135deg, var(--accent-primary) 0%, #7c3aed 100%);
     color: white;
     border: none;
     box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
   }
 
+  body.dark-theme .modal-backdrop .links .btn-primary:hover {
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  }
+
   @media (max-width: 768px) {
     .modal-backdrop { padding: 1rem; align-items: center; }
-    .modal-container { width: 95%; height: auto; margin: 0 auto; max-height: 85vh; border-radius: 12px; display: flex; flex-direction: column; }
-    .links .btn { max-width: 35%; padding: 0.5rem 1.5rem; border-radius: 6px; font-size: 0.75rem; }
-    .modal-image { height: 250px; flex-shrink: 0; }
-    .close-btn { top: 0.75rem; right: 0.75rem; width: 36px; height: 36px; }
-    .modal-body { padding: 1.5rem; overflow-y: auto; }
-    h2 { font-size: 1.75rem; }
-    .links .btn { width: 100%; }
+
+    .modal-container {
+      width: 95%;
+      height: auto;
+      margin: 0 auto;
+      max-height: 85vh;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-backdrop .links .btn {
+      max-width: 35%;
+      padding: 0.5rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .modal-backdrop .modal-image { height: 250px; flex-shrink: 0; }
+    .modal-backdrop .close-btn { top: 0.75rem; right: 0.75rem; width: 36px; height: 36px; }
+    .modal-backdrop .modal-body { padding: 1.5rem; overflow-y: auto; }
+    .modal-backdrop h2 { font-size: 1.75rem; }
+    .modal-backdrop .links .btn { width: 100%; }
   }
 
   @media (max-height: 600px) and (orientation: landscape) {
     .modal-container { flex-direction: row; max-height: 90vh; border-radius: 12px; }
-    .modal-image { width: 40%; height: 100%; }
-    .modal-body { width: 60%; overflow-y: auto; }
+    .modal-backdrop .modal-image { width: 40%; height: 100%; }
+    .modal-backdrop .modal-body { width: 60%; overflow-y: auto; }
   }
 </style>

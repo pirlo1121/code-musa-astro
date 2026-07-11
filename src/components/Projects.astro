@@ -15,7 +15,8 @@ import { API_BASE_URL } from '../config';
   </div>
 </section>
 
-<style>
+<!-- is:global so styles apply to dynamically rendered cards -->
+<style is:global>
   .projects-container {
     padding: 0 2rem;
     background: transparent;
@@ -29,18 +30,18 @@ import { API_BASE_URL } from '../config';
     z-index: 1;
   }
 
-  h2 {
+  .projects-container h2 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
     color: var(--text-color);
     transition: text-shadow 0.15s ease-out, color 0.15s ease-out;
   }
 
-  body.dark-theme h2 {
+  body.dark-theme .projects-container h2 {
     text-shadow: 0 0 10px var(--accent-glow);
   }
 
-  .projects-grid {
+  .projects-container .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
@@ -49,7 +50,7 @@ import { API_BASE_URL } from '../config';
     margin-bottom: 2rem;
   }
 
-  .project-card {
+  .projects-container .project-card {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
@@ -62,17 +63,17 @@ import { API_BASE_URL } from '../config';
     -webkit-backdrop-filter: blur(10px);
   }
 
-  body.dark-theme .project-card {
+  body.dark-theme .projects-container .project-card {
     background: rgba(20, 25, 35, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .project-card:hover {
+  .projects-container .project-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--hover-shadow);
   }
 
-  .project-card img {
+  .projects-container .project-card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
@@ -80,33 +81,24 @@ import { API_BASE_URL } from '../config';
     transition: opacity 0.15s ease-out;
   }
 
-  .project-card:hover img {
+  .projects-container .project-card:hover img {
     opacity: 1;
   }
 
-  .card-content {
+  .projects-container .card-content {
     padding: 1.5rem;
     flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  .card-content h3 {
+  .projects-container .card-content h3 {
     margin-top: 0;
     color: var(--text-primary);
     font-family: var(--font-display);
   }
 
-  .card-content p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-    flex-grow: 1;
-    text-align: left;
-    line-height: 1.6;
-  }
-
-  .subtitle {
+  .projects-container .subtitle {
     color: var(--text-secondary);
     font-size: 0.95rem;
     margin-bottom: 1rem;
@@ -116,9 +108,11 @@ import { API_BASE_URL } from '../config';
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex-grow: 1;
+    text-align: left;
   }
 
-  .read-more {
+  .projects-container .read-more {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -134,34 +128,34 @@ import { API_BASE_URL } from '../config';
     font-family: var(--font-body);
   }
 
-  .read-more:hover {
+  .projects-container .read-more:hover {
     color: var(--text-primary);
   }
 
-  .read-more svg {
+  .projects-container .read-more svg {
     transition: transform 0.2s ease;
   }
 
-  .read-more:hover svg {
+  .projects-container .read-more:hover svg {
     transform: translateX(4px);
   }
 
-  body.dark-theme .read-more {
+  body.dark-theme .projects-container .read-more {
     color: var(--accent-secondary);
   }
 
-  body.dark-theme .read-more:hover {
+  body.dark-theme .projects-container .read-more:hover {
     color: var(--accent-primary);
     text-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
   }
 
-  .links {
+  .projects-container .links {
     display: flex;
     gap: 1rem;
     margin-top: auto;
   }
 
-  .links .btn {
+  .projects-container .links .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -178,7 +172,7 @@ import { API_BASE_URL } from '../config';
     font-size: 0.95rem;
   }
 
-  .links .btn:hover {
+  .projects-container .links .btn:hover {
     background: var(--text-primary);
     color: var(--bg-primary);
     border-color: var(--text-primary);
@@ -186,54 +180,53 @@ import { API_BASE_URL } from '../config';
     box-shadow: var(--card-shadow);
   }
 
-  body.dark-theme .links .btn {
-    border-radius: 8px;
+  body.dark-theme .projects-container .links .btn {
     color: var(--accent-secondary);
     border-color: rgba(96, 165, 250, 0.3);
     background: rgba(96, 165, 250, 0.05);
   }
 
-  body.dark-theme .links .btn:hover {
+  body.dark-theme .projects-container .links .btn:hover {
     background: var(--accent-secondary);
     color: #fff;
     border-color: var(--accent-secondary);
     box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
   }
 
-  .links .btn-primary {
+  .projects-container .links .btn-primary {
     background: var(--text-primary);
     color: var(--bg-primary);
     border: 1px solid var(--text-primary);
   }
 
-  body.dark-theme .links .btn-primary {
+  body.dark-theme .projects-container .links .btn-primary {
     background: linear-gradient(135deg, var(--accent-primary) 0%, #8b5cf6 100%);
     color: #fff;
     border: none;
     box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
   }
 
-  .links .btn-primary:hover {
+  .projects-container .links .btn-primary:hover {
     opacity: 0.95;
     box-shadow: var(--hover-shadow);
   }
 
-  body.dark-theme .links .btn-primary:hover {
+  body.dark-theme .projects-container .links .btn-primary:hover {
     box-shadow: 0 0 20px rgba(167, 139, 250, 0.6);
     transform: translateY(-2px);
   }
 
-  .links .btn svg {
+  .projects-container .links .btn svg {
     width: 18px;
     height: 18px;
     transition: transform 0.2s ease;
   }
 
-  .links .btn:hover svg {
+  .projects-container .links .btn:hover svg {
     transform: scale(1.1);
   }
 
-  .pagination-controls {
+  .projects-container .pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -241,7 +234,7 @@ import { API_BASE_URL } from '../config';
     margin-top: 2rem;
   }
 
-  .btn-nav {
+  .projects-container .btn-nav {
     padding: 0.5rem 1rem;
     background: var(--surface-bg);
     border: 1px solid var(--border-color);
@@ -249,97 +242,113 @@ import { API_BASE_URL } from '../config';
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
+    font-family: var(--font-body);
   }
 
-  body.dark-theme .btn-nav {
+  body.dark-theme .projects-container .btn-nav {
     background: rgba(255, 255, 255, 0.05);
   }
 
-  .btn-nav:hover:not(:disabled) {
+  .projects-container .btn-nav:hover:not(:disabled) {
     background: var(--text-primary);
     color: var(--bg-primary);
   }
 
-  .btn-nav:disabled {
+  .projects-container .btn-nav:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
-  .page-indicator {
+  .projects-container .page-indicator {
     font-weight: bold;
     color: var(--text-primary);
   }
 
   @media (max-width: 768px) {
     .projects-container { padding: 0 1.5rem; }
-    .projects-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-    h2 { font-size: 2rem; }
-    .project-card img { height: 180px; }
-    .pagination-controls { gap: 1rem; }
+    .projects-container .projects-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .projects-container h2 { font-size: 2rem; }
+    .projects-container .project-card img { height: 180px; }
+    .projects-container .pagination-controls { gap: 1rem; }
   }
 
   @media (max-width: 480px) {
     .projects-container { padding: 0 1rem; }
-    h2 { font-size: 1.75rem; margin-bottom: 1.5rem; }
-    .card-content { padding: 1.25rem; }
-    .links .btn { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
-    .btn-nav { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+    .projects-container h2 { font-size: 1.75rem; margin-bottom: 1.5rem; }
+    .projects-container .card-content { padding: 1.25rem; }
+    .projects-container .links .btn { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+    .projects-container .btn-nav { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
   }
 </style>
 
 <script define:vars={{ API_BASE_URL }}>
-  (async function() {
-    const grid = document.getElementById('projects-grid');
-    const pagination = document.getElementById('pagination-controls');
-    const prevBtn = document.getElementById('prev-page');
-    const nextBtn = document.getElementById('next-page');
+  (async function () {
+    const grid          = document.getElementById('projects-grid');
+    const pagination    = document.getElementById('pagination-controls');
+    const prevBtn       = document.getElementById('prev-page');
+    const nextBtn       = document.getElementById('next-page');
     const pageIndicator = document.getElementById('page-indicator');
 
-    let projects = [];
+    let projects    = [];
     let currentPage = 1;
     const itemsPerPage = 3;
 
+    function escapeAttr(str) {
+      return String(str).replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
     function renderPage() {
-      const startIndex = (currentPage - 1) * itemsPerPage;
+      const startIndex   = (currentPage - 1) * itemsPerPage;
       const pageProjects = projects.slice(startIndex, startIndex + itemsPerPage);
-      const totalPages = Math.ceil(projects.length / itemsPerPage);
+      const totalPages   = Math.ceil(projects.length / itemsPerPage);
 
-      grid.innerHTML = pageProjects.map(p => {
-        const stackTags = p.stack.flatMap(s => s.split(' ')).map(s => `<span class="tag">${s}</span>`).join('');
-
-        return `
-          <div class="project-card">
-            <img src="${p.image || '/assets/project-placeholder.jpg'}" alt="${p.name}" loading="lazy" width="400" height="250" class="project-img">
-            <div class="card-content">
-              <h3>${p.name}</h3>
-              <p class="subtitle">${p.subtitle}</p>
-              <button class="read-more" data-project-id="${p._id}">
-                Ver más
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
+      grid.innerHTML = pageProjects.map(p => `
+        <div class="project-card">
+          <img
+            src="${escapeAttr(p.image || '/assets/project-placeholder.jpg')}"
+            alt="${escapeAttr(p.name)}"
+            loading="lazy"
+            width="400"
+            height="250"
+          >
+          <div class="card-content">
+            <h3>${escapeAttr(p.name)}</h3>
+            <p class="subtitle">${escapeAttr(p.subtitle)}</p>
+            <button class="read-more" data-project-id="${escapeAttr(p._id)}">
+              Ver más
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+              </svg>
+            </button>
+            <div class="links">
+              <a href="${escapeAttr(p.repository)}" target="_blank" rel="noopener noreferrer" class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
+                    0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
+                    -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
+                    .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.381 1.236-3.221
+                    -.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404
+                    1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176
+                    .77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222
+                    v3.293c0 .319.192.694.801.576C20.565 21.796 24 17.3 24 12c0-6.63-5.373-12-12-12z"/>
                 </svg>
-              </button>
-              <div class="links">
-                <a href="${p.repository}" target="_blank" class="btn">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                  GitHub
-                </a>
-                ${p.deploy ? `<a href="${p.deploy}" target="_blank" class="btn btn-primary">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                  </svg>
-                  Live
-                </a>` : ''}
-              </div>
+                GitHub
+              </a>
+              ${p.deploy ? `
+              <a href="${escapeAttr(p.deploy)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/>
+                  <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                Live
+              </a>` : ''}
             </div>
           </div>
-        `;
-      }).join('');
+        </div>
+      `).join('');
 
       pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
       prevBtn.disabled = currentPage === 1;
@@ -347,8 +356,7 @@ import { API_BASE_URL } from '../config';
 
       grid.querySelectorAll('.read-more').forEach(btn => {
         btn.addEventListener('click', () => {
-          const projectId = btn.dataset.projectId;
-          const project = projects.find(p => p._id === projectId);
+          const project = projects.find(p => p._id === btn.dataset.projectId);
           if (project) {
             window.dispatchEvent(new CustomEvent('open-project', { detail: project }));
           }
@@ -357,22 +365,16 @@ import { API_BASE_URL } from '../config';
     }
 
     prevBtn.addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderPage();
-      }
+      if (currentPage > 1) { currentPage--; renderPage(); }
     });
 
     nextBtn.addEventListener('click', () => {
       const totalPages = Math.ceil(projects.length / itemsPerPage);
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderPage();
-      }
+      if (currentPage < totalPages) { currentPage++; renderPage(); }
     });
 
     try {
-      const res = await fetch(`${API_BASE_URL}/projects`);
+      const res  = await fetch(`${API_BASE_URL}/projects`);
       const data = await res.json();
 
       if (data.ok) {
@@ -381,15 +383,12 @@ import { API_BASE_URL } from '../config';
           stack: p.stack.flatMap(s => s.split(' '))
         }));
         renderPage();
-
-        if (projects.length > itemsPerPage) {
-          pagination.style.display = '';
-        }
+        if (projects.length > itemsPerPage) pagination.style.display = '';
       } else {
         grid.innerHTML = '<p>No projects found.</p>';
       }
     } catch (err) {
-      console.error('Error loading projects', err);
+      console.error('Error loading projects:', err);
       grid.innerHTML = '<p>Failed to load projects.</p>';
     }
   })();
