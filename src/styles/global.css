@@ -428,4 +428,25 @@ body:not(.dark-theme) .comet-secondary {
   body.dark-theme .contact-form {
     background: rgba(20, 25, 35, 0.95);
   }
+
+  /* Box-shadow and filter transitions repaint every frame instead of
+     compositing on the GPU like transform/opacity do. The skill grid alone
+     has 15+ cards, each animating --card-shadow at once on theme toggle —
+     that repaint cost stacks up per card and is what makes the toggle feel
+     sluggish on phones even with backdrop-filter removed above. Let shadows
+     and the profile photo's grayscale/contrast filter snap instantly on
+     mobile; keep the cheap, compositor-friendly transitions. */
+  .skill-card {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.3s ease-out,
+                background 0.3s ease-out;
+  }
+
+  .projects-container .project-card {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .profile-img {
+    transition: border-color 0.15s ease-out;
+  }
 }
