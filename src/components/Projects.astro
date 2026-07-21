@@ -152,7 +152,8 @@ const projectsForClient = projects.map(p => ({
 
   .projects-container .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    justify-content: center;
     gap: 2rem;
     max-width: 1200px;
     width: 100%;
