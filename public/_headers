@@ -1,6 +1,8 @@
-# Netlify / Cloudflare Pages header convention. If deploying to a plain
-# nginx/Apache host instead, mirror these rules in the server config —
-# see the audit report for the nginx equivalent.
+# Netlify / Cloudflare Pages header convention — NOT read by Vercel.
+# The production deploy is on Vercel, so these rules are mirrored in
+# /vercel.json; keep both in sync if you change caching here. If deploying
+# to a plain nginx/Apache host instead, mirror these rules in the server
+# config — see the audit report for the nginx equivalent.
 
 # Hashed, content-addressed build assets (JS, inlined-CSS-referenced fonts,
 # optimized images) never change contents under the same URL — cache forever.

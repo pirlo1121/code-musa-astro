@@ -405,6 +405,15 @@ body:not(.dark-theme) .comet-secondary {
    surfaces at once. Desktop GPUs absorb this fine, so the glass aesthetic is
    kept there; mobile gets a solid, slightly more opaque surface instead —
    same visual language, no blur sampling cost. */
+/* !important is required throughout this block: Astro compiles each
+   component's own <style> rules to e.g. `.skill-card[data-astro-cid-xxxx]`,
+   which outranks the plain `.skill-card` selectors below on specificity
+   alone, and `.modal-backdrop` (declared is:global) ties on specificity but
+   comes later in the concatenated stylesheet — so without !important every
+   rule in this block loses the cascade and silently never applies, on any
+   viewport. That was the actual bug: this "mobile perf" block looked
+   correct but was fully inert, so the fixes it documents (no blur, no
+   box-shadow/filter transition) were never reaching the page. */
 @media (max-width: 768px) {
   header.scrolled,
   .contact-form,
@@ -413,20 +422,20 @@ body:not(.dark-theme) .comet-secondary {
   .modal-backdrop,
   .modal-backdrop .close-btn,
   .about-me-container .social-links a {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   body.dark-theme .skill-card {
-    background: rgba(20, 25, 35, 0.85);
+    background: rgba(20, 25, 35, 0.85) !important;
   }
 
   body.dark-theme .projects-container .project-card {
-    background: rgba(20, 25, 35, 0.9);
+    background: rgba(20, 25, 35, 0.9) !important;
   }
 
   body.dark-theme .contact-form {
-    background: rgba(20, 25, 35, 0.95);
+    background: rgba(20, 25, 35, 0.95) !important;
   }
 
   /* Box-shadow and filter transitions repaint every frame instead of
@@ -439,14 +448,14 @@ body:not(.dark-theme) .comet-secondary {
   .skill-card {
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                 border-color 0.3s ease-out,
-                background 0.3s ease-out;
+                background 0.3s ease-out !important;
   }
 
   .projects-container .project-card {
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
   .profile-img {
-    transition: border-color 0.15s ease-out;
+    transition: border-color 0.15s ease-out !important;
   }
 }
