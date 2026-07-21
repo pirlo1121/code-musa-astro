@@ -81,14 +81,15 @@ const user = await getProfile();
     margin-bottom: 1.5rem;
     border: 4px solid rgba(0, 0, 0, 0.696);
     box-shadow: 0 4px 40px rgba(0, 0, 0, 0.707);
+    animation: float-hero 7s ease-in-out infinite;
+
     transition: box-shadow 0.15s ease-out, border-color 0.15s ease-out, filter 0.15s ease-out;
   }
 
   body.dark-theme .profile-img {
-    box-shadow: 0 0 70px #a78bfaba;
+    box-shadow: 0 0 40px #a182ffba;
     filter: grayscale(0.2) contrast(1.1);
-    border: 2px solid rgba(255, 255, 255, 0.594);
-    animation: float-hero 8s ease-in-out infinite;
+    border: 4px solid #a182ffba;
   }
 
   h1 {
