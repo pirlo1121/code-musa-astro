@@ -313,9 +313,35 @@
 
   let lastScrollY = 0;
 
-  themeToggle.addEventListener('click', () => {
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Toggling the theme flips dozens of properties (background, color,
+  // box-shadow, text-shadow, filter) on nearly every element. Letting each one
+  // run its own CSS transition means the browser repaints the whole page on
+  // every frame for ~300ms, which is what made the toggle stutter on phones.
+  // Instead: kill all transitions for the switch, so the change is a single
+  // style recalc + one paint, and (where supported) let the View Transitions
+  // API crossfade two snapshots on the compositor, which costs no repaints.
+  function applyTheme() {
+    root.classList.add('theme-switching');
     const isDark = document.body.classList.toggle('dark-theme');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    // Force the new styles to be computed while transitions are still off
+    window.getComputedStyle(document.body).backgroundColor;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => root.classList.remove('theme-switching'));
+    });
+    try {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    } catch {}
+  }
+
+  themeToggle.addEventListener('click', () => {
+    if (document.startViewTransition && !reducedMotion.matches) {
+      document.startViewTransition(applyTheme);
+    } else {
+      applyTheme();
+    }
   });
 
   let rafId = 0;
