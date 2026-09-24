@@ -1,0 +1,80 @@
+---
+import { experience, type ExperienceEntry } from '../../data/experience';
+
+const columns: { title: string; entries: ExperienceEntry[] }[] = [
+  { title: 'Trayectoria', entries: experience.path },
+  { title: 'Estudios', entries: experience.education },
+  { title: 'Certificaciones', entries: experience.certifications },
+  { title: 'Logros', entries: experience.achievements },
+].filter((c) => c.entries.length > 0);
+---
+
+<section id="experience" class="station" aria-labelledby="experience-title">
+  <div class="station__inner">
+    <div class="panel panel--left panel--wide glass" data-reveal>
+      <p class="kicker" data-reveal-item>05 — Estación orbital</p>
+      <h2 id="experience-title" class="section-title" data-reveal-item data-focus-target>Experiencia y aprendizaje</h2>
+
+      <div class="log">
+        {columns.map((col) => (
+          <section class="log__column" data-reveal-item aria-labelledby={`log-${col.title}`}>
+            <h3 id={`log-${col.title}`} class="label">{col.title}</h3>
+            <ol class="timeline" role="list">
+              {col.entries.map((e) => (
+                <li class="timeline__item">
+                  <span class="timeline__period">{e.period}</span>
+                  <p class="timeline__title">{e.title}</p>
+                  <p class="timeline__org">{e.org}</p>
+                  {e.description && <p class="timeline__text">{e.description}</p>}
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .log {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 2rem 2.5rem;
+    margin-top: 2rem;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0 0 0 1.1rem;
+    border-left: 1px solid var(--line);
+    display: grid;
+    gap: 1.3rem;
+  }
+
+  .timeline__item { position: relative; }
+
+  .timeline__item::before {
+    content: '';
+    position: absolute;
+    left: calc(-1.1rem - 4px);
+    top: 0.35rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .timeline__period {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .timeline__title { margin-top: 0.25rem; font-weight: 600; color: var(--ink); }
+  .timeline__org { color: var(--ink-2); font-size: 0.92rem; }
+  .timeline__text { color: var(--ink-3); font-size: 0.9rem; margin-top: 0.35rem; line-height: 1.6; }
+</style>

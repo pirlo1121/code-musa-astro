@@ -1,0 +1,95 @@
+---
+import type { ProjectView } from '../../lib/data';
+
+interface Props { projects: ProjectView[] }
+const { projects } = Astro.props;
+const total = String(projects.length).padStart(2, '0');
+---
+
+<section id="projects" class="station station--steps" aria-labelledby="projects-title">
+  <div class="station__inner">
+    <header class="section-head" data-reveal>
+      <p class="kicker" data-reveal-item>04 — Galaxia</p>
+      <h2 id="projects-title" class="section-title" data-reveal-item data-focus-target>Proyectos</h2>
+      <p class="section-lede" data-reveal-item>
+        Cada proyecto es un planeta en su propia órbita. Acércate para ver su superficie.
+      </p>
+    </header>
+
+    {projects.length === 0 ? (
+      <p class="step-card glass">No hay proyectos disponibles en este momento.</p>
+    ) : (
+      <ol class="steps" data-step-group="projects" role="list">
+        {projects.map((p, i) => (
+          <li class="step" data-step>
+            <article class="step-card step-card--project glass" aria-labelledby={`project-${p._id}`}>
+              <img
+                class="project-shot"
+                src={p.shot ?? '/assets/project-placeholder.svg'}
+                alt={`Captura de ${p.name}`}
+                width="960"
+                height="540"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="step-card__meta">
+                <span class="step-card__index">{String(i + 1).padStart(2, '0')} / {total}</span>
+              </div>
+              <h3 id={`project-${p._id}`} class="step-card__title">{p.name}</h3>
+              <p class="step-card__text">{p.description}</p>
+              {p.stack.length > 0 && (
+                <ul class="chips" role="list" aria-label="Tecnologías">
+                  {p.stack.map((t) => <li class="chip">{t}</li>)}
+                </ul>
+              )}
+              <div class="step-card__actions">
+                {p.repository && (
+                  <a class="btn btn--ghost btn--sm" href={p.repository} target="_blank" rel="noopener noreferrer">
+                    <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.19.7.8.58A12 12 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                    Código
+                  </a>
+                )}
+                {p.deploy && (
+                  <a class="btn btn--primary btn--sm" href={p.deploy} target="_blank" rel="noopener noreferrer">
+                    Ver en vivo
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+                  </a>
+                )}
+              </div>
+            </article>
+          </li>
+        ))}
+      </ol>
+    )}
+  </div>
+</section>
+
+<style>
+  .project-shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 900px) {
+    .project-shot { max-height: 20svh; }
+  }
+
+  /* On wide screens with 3D on, the screenshot is projected as a hologram
+     next to the planet instead, so the card stays compact. */
+  @media (min-width: 900px) and (min-aspect-ratio: 9/10) {
+    :global(html:not([data-quality='off'])) .project-shot { display: none; }
+  }
+
+  .step-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+</style>

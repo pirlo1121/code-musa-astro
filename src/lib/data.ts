@@ -20,6 +20,11 @@ export interface Project {
   stack: string[];
 }
 
+/** A project plus its build-time optimised screenshot (WebP, 16:9), or null. */
+export interface ProjectView extends Project {
+  shot: string | null;
+}
+
 // Runs at build time (output: 'static'). If the API is briefly unreachable
 // during a build, fall back to null/[] instead of failing the whole build —
 // the page still renders, just without live content until the next deploy.

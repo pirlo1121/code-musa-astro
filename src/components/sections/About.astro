@@ -1,0 +1,108 @@
+---
+import { Image } from 'astro:assets';
+import type { Profile } from '../../lib/data';
+import { site } from '../../data/site';
+
+interface Props { profile: Profile | null }
+const { profile } = Astro.props;
+---
+
+<section id="about" class="station" aria-labelledby="about-title">
+  <div class="station__inner">
+    <div class="panel panel--right glass" data-reveal>
+      <p class="kicker" data-reveal-item>02 — Nebulosa</p>
+      <div class="about__intro" data-reveal-item>
+        {profile?.image ? (
+          <Image src={profile.image} alt={`Foto de ${profile.name}`} width={160} height={160} class="about__photo" loading="lazy" decoding="async" />
+        ) : (
+          <img src="/assets/placeholder.svg" alt="" width="160" height="160" class="about__photo" loading="lazy" decoding="async" />
+        )}
+        <h2 id="about-title" class="section-title" data-focus-target>Sobre mí</h2>
+      </div>
+      <p class="about__bio" data-reveal-item>
+        {profile?.bio ?? 'Desarrollador de software enfocado en construir productos web rápidos y mantenibles.'}
+      </p>
+
+      <div class="about__grid">
+        <div data-reveal-item>
+          <h3 class="label">Tecnologías favoritas</h3>
+          <ul class="chips" role="list">
+            {site.favoriteTech.map((t) => <li class="chip">{t}</li>)}
+          </ul>
+        </div>
+        <div data-reveal-item>
+          <h3 class="label">Intereses</h3>
+          <ul class="interest-list" role="list">
+            {site.interests.map((t) => <li>{t}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      {(profile?.socialLinks?.github || profile?.socialLinks?.linkedin) && (
+        <div class="about__links" data-reveal-item>
+          {profile?.socialLinks?.github && <a class="link-arrow" href={profile.socialLinks.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
+          {profile?.socialLinks?.linkedin && <a class="link-arrow" href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about__intro {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .about__photo {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255, 180, 240, 0.4);
+    box-shadow: 0 0 0 5px rgba(255, 90, 170, 0.08), 0 0 40px rgba(180, 100, 255, 0.35);
+  }
+
+  .about__bio {
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--ink-2);
+    margin-bottom: 2rem;
+    overflow-wrap: anywhere;
+  }
+
+  .about__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.75rem;
+  }
+
+  .interest-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+    color: var(--ink-2);
+  }
+
+  .interest-list li::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 0.6rem;
+    border-radius: 50%;
+    background: var(--accent-2);
+    box-shadow: 0 0 10px var(--accent-2);
+    vertical-align: middle;
+  }
+
+  .about__links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+</style>

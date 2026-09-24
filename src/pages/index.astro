@@ -1,159 +1,125 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import AboutMe from '../components/AboutMe.astro';
-import Projects from '../components/Projects.astro';
-import Skills from '../components/Skills.astro';
-import Contact from '../components/Contact.astro';
-import ProjectModal from '../components/ProjectModal.astro';
+import SpaceBackdrop from '../components/ui/SpaceBackdrop.astro';
+import Hero from '../components/sections/Hero.astro';
+import About from '../components/sections/About.astro';
+import Skills from '../components/sections/Skills.astro';
+import Projects from '../components/sections/Projects.astro';
+import Experience from '../components/sections/Experience.astro';
+import Contact from '../components/sections/Contact.astro';
+import { getProfile, getProjects, type ProjectView } from '../lib/data';
+import type { ProjectBody } from '../scenes/types';
+
+const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
+
+// Screenshots are resized and re-encoded at build time (16:9 WebP), then
+// served same-origin: the 3D hologram can use them as textures without CORS.
+const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => {
+  if (!p.image) return { ...p, shot: null };
+  try {
+    const img = await getImage({ src: p.image, width: 960, height: 540, format: 'webp', quality: 78 });
+    return { ...p, shot: img.src };
+  } catch (err) {
+    console.error('[build] Failed to optimise screenshot for', p.name, err);
+    return { ...p, shot: null };
+  }
+}));
+
+const bodies: ProjectBody[] = projectViews.map((p) => ({ id: p._id, name: p.name, image: p.shot }));
 ---
 
-<BaseLayout title="Maicol Bautista">
-  <main class="content-container">
-    <Header />
+<BaseLayout>
+  <SpaceBackdrop projects={bodies} />
+  <Header />
 
-    <section id="about-me" class="scroll-section reveal">
-      <AboutMe />
-    </section>
-
-    <section id="projects" class="scroll-section reveal">
-      <Projects />
-    </section>
-
-    <section id="skills" class="scroll-section reveal">
-      <Skills />
-    </section>
-
-    <section id="contact" class="scroll-section reveal">
-      <Contact />
-    </section>
+  <main id="main" class="journey">
+    <Hero profile={profile} />
+    <About profile={profile} />
+    <Skills />
+    <Projects projects={projectViews} />
+    <Experience />
+    <Contact profile={profile} />
   </main>
 
-  <Footer />
-  <ProjectModal />
+  <Footer profile={profile} />
 </BaseLayout>
 
-<style>
-  .content-container {
-    padding-top: 100px;
-    min-height: 100vh;
-  }
-
-  .scroll-section {
-    min-height: 60vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 4rem 0;
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
-  }
-
-  .reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Skip rendering off-screen sections until they approach the viewport.
-     Reduces initial paint time and main-thread work for below-fold content. */
-  #projects, #skills, #contact {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 700px;
-  }
-
-  @media (max-width: 768px) {
-    .content-container { padding-top: 120px; }
-    .scroll-section { padding: 3rem 0; min-height: 50vh; }
-  }
-
-  @media (max-width: 480px) {
-    .content-container { padding-top: 110px; }
-    .scroll-section { padding: 2rem 0; }
-  }
-</style>
-
 <script>
-  // Intersection Observer for scroll reveals (once pattern)
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-        observer.unobserve(entry.target);
-        // Free GPU memory after transition completes
-        entry.target.addEventListener('transitionend', () => {
-          entry.target.style.willChange = 'auto';
-        }, { once: true });
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { initScrollDirector } from '../animations/scroll-director';
+  import { getQuality, setQualityPref, subscribeQuality, effectiveTier, type QualityPref } from '../lib/store';
+  import { SECTIONS } from '../data/site';
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- HUD + nav state ------------------------------------------------------
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav]');
+  const hudIndex = document.getElementById('hud-index');
+  const hudObject = document.getElementById('hud-object');
+  const progress = document.getElementById('journey-progress');
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  initScrollDirector({
+    reducedMotion,
+    onSection(i) {
+      navLinks.forEach((a) => {
+        if (Number(a.dataset.nav) === i) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+      // Keep the active pill visible in the horizontally scrollable mobile nav.
+      const link = navLinks[i];
+      const list = link?.closest('ol');
+      if (link && list && list.scrollWidth > list.clientWidth) {
+        list.scrollTo({ left: link.offsetLeft - 16, behavior: reducedMotion ? 'auto' : 'smooth' });
       }
-    });
-  }, {
-    threshold: 0.12,
-    rootMargin: '0px 0px -60px 0px'
+      if (hudIndex) hudIndex.textContent = `${pad(i + 1)} / ${pad(SECTIONS.length)}`;
+      if (hudObject) hudObject.textContent = SECTIONS[i].object;
+    },
+    onProgress(p) {
+      if (progress) progress.style.transform = `scaleX(${p})`;
+    },
   });
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // Project Modal logic
-  const modal = document.getElementById('project-modal');
-  const modalImg = document.getElementById('modal-img');
-  const modalTitle = document.getElementById('modal-title');
-  const modalSubtitle = document.getElementById('modal-subtitle');
-  const modalDescription = document.getElementById('modal-description');
-  const modalTags = document.getElementById('modal-tags');
-  const modalRepo = document.getElementById('modal-repo');
-  const modalDeploy = document.getElementById('modal-deploy');
-  const modalClose = document.getElementById('modal-close');
-
-  function openModal(project) {
-    modalImg.src = project.modalImage || '/assets/project-placeholder.svg';
-    modalImg.alt = project.name;
-    modalTitle.textContent = project.name;
-    modalSubtitle.textContent = project.subtitle;
-    modalDescription.textContent = project.description;
-
-    const stack = project.stack.flatMap(s => s.split(' '));
-    modalTags.innerHTML = stack.map(s => `<span class="tag">${s}</span>`).join('');
-
-    modalRepo.href = project.repository;
-
-    if (project.deploy) {
-      modalDeploy.style.display = '';
-      modalDeploy.href = project.deploy;
-    } else {
-      modalDeploy.style.display = 'none';
-    }
-
-    modal.style.display = '';
-    document.body.style.overflow = 'hidden';
+  // --- Intro ----------------------------------------------------------------
+  if (!reducedMotion) {
+    gsap.from('[data-intro]', { autoAlpha: 0, y: 28, duration: 1.4, ease: 'expo.out', stagger: 0.12, delay: 0.25 });
   }
 
-  function closeModal() {
-    modal.classList.add('closing');
-    modal.addEventListener('animationend', () => {
-      modal.style.display = 'none';
-      modal.classList.remove('closing');
-      document.body.style.overflow = '';
-    }, { once: true });
+  // --- Quality selector -------------------------------------------------------
+  const select = document.getElementById('quality-select') as HTMLSelectElement | null;
+  const toast = document.getElementById('toast');
+  let toastTimer = 0;
+
+  function showToast(text: string) {
+    if (!toast) return;
+    toast.textContent = text;
+    toast.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => toast.classList.remove('is-visible'), 4500);
   }
 
-  window.addEventListener('open-project', (e) => {
-    openModal(e.detail);
+  if (select) {
+    select.value = getQuality().pref;
+    select.addEventListener('change', () => setQualityPref(select.value as QualityPref));
+  }
+
+  let lastTier = effectiveTier();
+  subscribeQuality(() => {
+    const tier = effectiveTier();
+    if (select) select.value = getQuality().pref;
+    // Section heights differ with and without the 3D journey.
+    if ((tier === 'off') !== (lastTier === 'off')) requestAnimationFrame(() => ScrollTrigger.refresh());
+    lastTier = tier;
   });
 
-  modalClose.addEventListener('click', closeModal);
-
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal && !modal.classList.contains('closing')) {
-      closeModal();
-    }
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.style.display !== 'none' && !modal.classList.contains('closing')) {
-      closeModal();
-    }
+  window.addEventListener('space:downgrade', () => {
+    const tier = effectiveTier();
+    showToast(tier === 'off'
+      ? 'Tu dispositivo no mantiene la fluidez: activamos el modo sin 3D. Puedes cambiarlo arriba.'
+      : 'Ajustamos la calidad visual automáticamente para mantener la fluidez.');
   });
 </script>

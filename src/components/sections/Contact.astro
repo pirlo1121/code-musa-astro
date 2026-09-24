@@ -1,0 +1,161 @@
+---
+import { API_BASE_URL } from '../../config';
+import type { Profile } from '../../lib/data';
+import { site } from '../../data/site';
+
+interface Props { profile: Profile | null }
+const { profile } = Astro.props;
+const github = profile?.socialLinks?.github;
+const linkedin = profile?.socialLinks?.linkedin;
+---
+
+<section id="contact" class="station station--contact" aria-labelledby="contact-title">
+  <div class="station__inner">
+    <div class="panel panel--left glass" data-reveal>
+      <p class="kicker" data-reveal-item>06 — Portal</p>
+      <h2 id="contact-title" class="section-title" data-reveal-item data-focus-target>Abramos un portal</h2>
+      <p class="section-lede" data-reveal-item>
+        ¿Tienes un proyecto, una idea o una oportunidad? Escríbeme y te respondo pronto.
+      </p>
+
+      {(site.email || github || linkedin) && (
+        <ul class="contact-links" role="list" data-reveal-item>
+          {site.email && <li><a class="link-arrow" href={`mailto:${site.email}`}>{site.email}</a></li>}
+          {github && <li><a class="link-arrow" href={github} target="_blank" rel="noopener noreferrer">GitHub</a></li>}
+          {linkedin && <li><a class="link-arrow" href={linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>}
+        </ul>
+      )}
+
+      <form id="contact-form" class="contact-form" data-api={API_BASE_URL} data-reveal-item novalidate>
+        <div class="field">
+          <label for="contact-name">Nombre</label>
+          <input id="contact-name" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="field">
+          <label for="contact-email">Correo</label>
+          <input id="contact-email" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="contact-message">Mensaje</label>
+          <textarea id="contact-message" name="message" rows="4" required></textarea>
+        </div>
+        <button class="btn btn--primary btn--block" type="submit" id="contact-submit">
+          <span class="btn__label">Enviar mensaje</span>
+        </button>
+        <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .station--contact { min-height: 190svh; }
+
+  .contact-links {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .contact-form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .field { display: grid; gap: 0.4rem; }
+
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(2, 4, 12, 0.6);
+    color: var(--ink);
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .field textarea { resize: vertical; min-height: 7rem; max-height: 18rem; }
+
+  .field input:focus-visible,
+  .field textarea:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(127, 216, 255, 0.2), 0 0 24px rgba(127, 216, 255, 0.15);
+  }
+
+  .field input[aria-invalid='true'],
+  .field textarea[aria-invalid='true'] { border-color: var(--danger); }
+
+  .form-status { min-height: 1.4em; font-size: 0.9rem; color: var(--ink-2); }
+  .form-status[data-state='ok'] { color: var(--success); }
+  .form-status[data-state='error'] { color: var(--danger); }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('contact-status')!;
+  const submit = document.getElementById('contact-submit') as HTMLButtonElement;
+  const label = submit?.querySelector('.btn__label');
+
+  function setStatus(text: string, state: 'ok' | 'error' | '' = '') {
+    status.textContent = text;
+    status.dataset.state = state;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fields = ['name', 'email', 'message'].map((n) => form.elements.namedItem(n) as HTMLInputElement);
+    let firstInvalid: HTMLInputElement | null = null;
+    for (const f of fields) {
+      const valid = f.checkValidity() && f.value.trim() !== '';
+      f.setAttribute('aria-invalid', String(!valid));
+      if (!valid && !firstInvalid) firstInvalid = f;
+    }
+    if (firstInvalid) {
+      setStatus('Revisa los campos marcados: todos son obligatorios y el correo debe ser válido.', 'error');
+      firstInvalid.focus();
+      return;
+    }
+
+    const [name, email, message] = fields.map((f) => f.value.trim());
+    submit.disabled = true;
+    if (label) label.textContent = 'Abriendo el portal…';
+    setStatus('');
+
+    try {
+      const res = await fetch(`${form.dataset.api}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setStatus(data.msg || '¡Mensaje enviado! Te responderé pronto.', 'ok');
+        form.reset();
+        fields.forEach((f) => f.removeAttribute('aria-invalid'));
+      } else {
+        setStatus(data.msg || 'No se pudo enviar el mensaje.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus('Ocurrió un error de conexión. Inténtalo de nuevo.', 'error');
+    } finally {
+      submit.disabled = false;
+      if (label) label.textContent = 'Enviar mensaje';
+    }
+  });
+</script>

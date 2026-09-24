@@ -1,0 +1,95 @@
+---
+import { skills } from '../../data/skills';
+---
+
+<section id="skills" class="station station--steps" aria-labelledby="skills-title">
+  <div class="station__inner">
+    <header class="section-head" data-reveal>
+      <p class="kicker" data-reveal-item>03 — Sistema planetario</p>
+      <h2 id="skills-title" class="section-title" data-reveal-item data-focus-target>Habilidades</h2>
+      <p class="section-lede" data-reveal-item>
+        Cada tecnología es un mundo en órbita. Sigue bajando para acercarte a cada planeta.
+      </p>
+    </header>
+
+    <ol class="steps" data-step-group="skills" role="list">
+      {skills.map((skill, i) => (
+        <li class="step" data-step>
+          <article class="step-card glass" aria-labelledby={`skill-${skill.id}`}>
+            <div class="step-card__meta">
+              <span class="step-card__index">{String(i + 1).padStart(2, '0')} / {String(skills.length).padStart(2, '0')}</span>
+              <span class="planet-dot" style={`--dot: ${skill.atmosphere}`} aria-hidden="true"></span>
+            </div>
+            <h3 id={`skill-${skill.id}`} class="step-card__title">{skill.name}</h3>
+            <div class="meter">
+              <div class="meter__head">
+                <span class="label">{skill.levelLabel}</span>
+                <span class="meter__value">{skill.level}%</span>
+              </div>
+              <div
+                class="meter__track"
+                role="meter"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow={skill.level}
+                aria-label={`Nivel en ${skill.name}`}
+              >
+                <span class="meter__fill" style={`--level: ${skill.level / 100}; --dot: ${skill.atmosphere}`}></span>
+              </div>
+            </div>
+            <p class="step-card__text">{skill.description}</p>
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .planet-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--dot);
+    box-shadow: 0 0 14px var(--dot);
+  }
+
+  .meter { margin: 1.25rem 0 1.25rem; }
+
+  .meter__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+
+  .meter__value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    color: var(--ink);
+  }
+
+  .meter__track {
+    height: 4px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  .meter__fill {
+    display: block;
+    height: 100%;
+    width: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--dot) 40%, transparent), var(--dot));
+    box-shadow: 0 0 12px var(--dot);
+    transform-origin: left;
+    transform: scaleX(var(--level));
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+  }
+
+  /* Animate the fill each time the planet comes into focus. */
+  :global(html.js:not([data-quality='off'])) .step:not(.is-active) .meter__fill {
+    transform: scaleX(0);
+  }
+</style>

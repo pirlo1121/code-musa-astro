@@ -1,0 +1,73 @@
+---
+import SpaceExperience from '../../scenes/SpaceExperience';
+import type { ProjectBody } from '../../scenes/types';
+
+interface Props {
+  projects: ProjectBody[];
+}
+
+const { projects } = Astro.props;
+---
+
+<!-- Fixed layer behind the content. The CSS backdrop is the poster frame
+     (shown before WebGL is ready) and the permanent fallback when 3D is off. -->
+<div class="space-backdrop" aria-hidden="true">
+  <div class="space-fallback"></div>
+  <SpaceExperience client:only="react" projects={projects} />
+</div>
+
+<style is:global>
+  .space-backdrop {
+    position: fixed;
+    inset: 0 0 auto 0;
+    /* Large viewport height: the layer does not resize (and re-render) when
+       the mobile URL bar shows or hides during scroll. */
+    height: 100lvh;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--space);
+  }
+
+  .space-fallback {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 45% at 78% 22%, rgba(255, 140, 60, 0.22), transparent 70%),
+      radial-gradient(ellipse 55% 50% at 12% 70%, rgba(120, 60, 220, 0.22), transparent 70%),
+      radial-gradient(ellipse 40% 35% at 60% 90%, rgba(40, 140, 200, 0.16), transparent 70%),
+      var(--space);
+  }
+
+  .space-fallback::before,
+  .space-fallback::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+      radial-gradient(1px 1px at 80px 120px, #cfe0ff, transparent),
+      radial-gradient(1.5px 1.5px at 150px 60px, #fff, transparent),
+      radial-gradient(1px 1px at 210px 180px, #ffe7c8, transparent),
+      radial-gradient(1px 1px at 260px 20px, #fff, transparent),
+      radial-gradient(1px 1px at 40px 220px, #dfe8ff, transparent);
+    background-size: 300px 260px;
+    opacity: 0.7;
+  }
+
+  .space-fallback::after {
+    background-size: 470px 410px;
+    background-position: 120px 80px;
+    opacity: 0.45;
+  }
+
+  .space-canvas {
+    position: absolute !important;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.6s ease;
+  }
+
+  .space-ready .space-canvas {
+    opacity: 1;
+  }
+</style>

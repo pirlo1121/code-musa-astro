@@ -1,423 +1,398 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ==========================================================================
+   Design tokens
+   ========================================================================== */
 
 :root {
-  --bg-primary: #F9F8F4;
-  --bg-secondary: #EBEAE4;
-  --surface-bg: #FFFFFF;
+  color-scheme: dark;
 
-  --text-primary: #2C2420;
-  --text-secondary: #594D46;
-  --text-tertiary: #8C7F76;
+  --space: #02030a;
+  --ink: #eef2ff;
+  --ink-2: #aeb8d4;
+  --ink-3: #6f7a99;
+  --line: rgba(170, 195, 255, 0.14);
 
-  --accent-primary: #2C2420;
-  --accent-secondary: #8B4513;
-  --accent-glow: rgba(44, 36, 32, 0.05);
+  --accent: #7fd8ff;
+  --accent-2: #b48cff;
+  --warm: #ffb070;
+  --success: #5ef0a8;
+  --danger: #ff6b81;
 
-  --border-color: #D9D2C5;
+  --glass: rgba(6, 9, 22, 0.62);
+  --glass-strong: rgba(6, 9, 22, 0.82);
 
-  --input-bg: #FFFFFF;
-  --header-bg: rgba(249, 248, 244, 0.95);
-  --footer-bg: #EBEAE4;
-  --footer-text: #2C2420;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, monospace;
 
-  --card-shadow: 0 2px 8px rgba(44, 36, 32, 0.10), 0 1px 3px rgba(44, 36, 32, 0.06);
-  --hover-shadow: 0 8px 24px rgba(44, 36, 32, 0.14), 0 2px 8px rgba(44, 36, 32, 0.08);
-
-  --color-success: #16a34a;
-  --color-error: #dc2626;
-
-  --font-display: 'Inter', 'Georgia', serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --line-height-base: 1.7;
-
-  --bg-color: var(--bg-primary);
-  --text-color: var(--text-primary);
-  --accent-color: var(--accent-primary);
-  --primary-btn-bg: var(--text-primary);
-  --primary-btn-text: #FFFFFF;
-
-  --transition-speed: 0.15s;
-  --transition-ease: ease-out;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body.dark-theme {
-  --bg-primary: #05070a;
-  --bg-secondary: #0b0e14;
-  --surface-bg: rgba(20, 25, 35, 0.6);
+/* ==========================================================================
+   Base
+   ========================================================================== */
 
-  --text-primary: #EAEAEA;
-  --text-secondary: #A0AAB5;
-  --text-tertiary: #5C6773;
-
-  --accent-primary: #A78BFA;
-  --accent-secondary: #60A5FA;
-  --accent-glow: rgba(167, 139, 250, 0.4);
-
-  --border-color: rgba(255, 255, 255, 0.08);
-
-  --input-bg: rgba(15, 20, 30, 0.8);
-  --header-bg: rgba(5, 7, 10, 0.85);
-  --footer-bg: #020203;
-  --footer-text: #8899A6;
-
-  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --hover-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(167, 139, 250, 0.15);
-
-  --bg-color: var(--bg-primary);
-  --text-color: var(--text-primary);
-  --accent-color: var(--accent-primary);
-  --primary-btn-bg: var(--text-primary);
-  --primary-btn-text: #05070a;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--space);
+}
+
+/* Lenis drives smooth scrolling; native smooth scroll would fight it. */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
 
 body {
-  margin: 0;
-  font-family: var(--font-body);
-  background-color: var(--bg-primary);
-  color: var(--text-color);
-  line-height: var(--line-height-base);
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow-x: hidden;
   min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--space);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+img { max-width: 100%; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection { background: rgba(127, 216, 255, 0.3); color: #fff; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Journey layout
+   ========================================================================== */
+
+.journey {
   position: relative;
+  z-index: 1;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* lvh = viewport with the mobile URL bar hidden: the layer keeps one size
-     while the bar slides in/out during scroll instead of resizing and
-     repainting on every toggle. */
-  height: 100lvh;
-  pointer-events: none;
-  z-index: -2;
-  opacity: 0.6;
-  background-image:
-    linear-gradient(rgba(44, 36, 32, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(44, 36, 32, 0.06) 1px, transparent 1px),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-  background-size: 40px 40px, 40px 40px, auto;
-  transition: opacity var(--transition-speed);
-  will-change: opacity;
+/* A station is one stop of the journey. Its height is scroll distance: the
+   camera stays parked on the object while the section is on screen. */
+.station {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 180svh;
+  padding-block: 30svh;
+  scroll-margin-top: 0;
 }
 
-body.dark-theme::before {
-  opacity: 0;
+.station__inner {
+  width: min(1200px, 100% - 2 * var(--gutter));
+  margin-inline: auto;
 }
 
-body.dark-theme::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  height: 100lvh;
-  pointer-events: none;
-  z-index: -1;
+.panel { max-width: 36rem; }
+.panel--wide { max-width: min(46rem, 58vw); }
+@media (max-width: 900px) { .panel--wide { max-width: none; } }
+.panel--left { margin-right: auto; }
+.panel--right { margin-left: auto; }
+
+/* Readable glass over a live WebGL canvas. Backdrop blur re-samples the
+   canvas every frame, so it is reserved for the high tier. */
+.glass {
+  position: relative;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: 22px;
   background:
-    radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(30, 58, 138, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.55) 100%);
-  transition: opacity var(--transition-speed);
-  will-change: opacity;
-  animation: universe-pulse 20s ease-in-out infinite alternate;
+    linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 40%),
+    var(--glass);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.starfield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  height: 100lvh;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity var(--transition-speed);
-  will-change: opacity;
+html[data-quality='high'] .glass {
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
 }
 
-body.dark-theme .starfield {
-  opacity: 1;
+/* ==========================================================================
+   Type
+   ========================================================================== */
+
+.kicker,
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
-.starfield canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(6, 9, 22, 0.5);
+  color: var(--ink-2);
 }
 
-.comet-primary {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 200px;
-  height: 3px;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0) 0%, rgba(130, 180, 255, 0.6) 80%, #FFF 100%);
-  border-radius: 50% 0 0 50%;
-  opacity: 0;
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8));
-  animation: comet-pass-1 12s ease-in infinite;
-  animation-delay: 2s;
-  z-index: -1;
-  will-change: transform, opacity;
-}
-
-.comet-primary::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  background: #FFF;
+.eyebrow__dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.9);
+  background: var(--warm);
+  box-shadow: 0 0 12px var(--warm);
 }
 
-.comet-secondary {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 160px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(167, 139, 250, 0) 0%, rgba(192, 132, 252, 0.6) 80%, #FFF 100%);
-  border-radius: 50% 0 0 50%;
-  opacity: 0;
-  filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.8));
-  animation: comet-pass-2 20s ease-in infinite;
-  animation-delay: 8s;
-  z-index: -1;
-  will-change: transform, opacity;
+.section-title {
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  margin-top: 0.6rem;
+  text-wrap: balance;
 }
 
-.comet-secondary::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 5px;
-  background: #FFF;
-  border-radius: 50%;
-  box-shadow: 0 0 15px 4px rgba(167, 139, 250, 0.9);
+.section-lede {
+  margin-top: 1rem;
+  max-width: 34rem;
+  color: var(--ink-2);
+  font-size: 1.05rem;
+  text-wrap: pretty;
 }
 
-@keyframes comet-pass-1 {
-  0%   { transform: translate3d(-15vw, -15vh, 0) rotate(45deg);   opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
-  100% { transform: translate3d(115vw, 115vh, 0) rotate(45deg);  opacity: 0; }
+.label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
-@keyframes comet-pass-2 {
-  0%   { transform: translate3d(-15vw, 110vh, 0) rotate(-45deg); opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
-  100% { transform: translate3d(115vw, -15vh, 0) rotate(-45deg); opacity: 0; }
-}
-
-@keyframes universe-pulse {
-  0%   { opacity: 0.85; }
-  100% { opacity: 1; }
-}
-
-@keyframes float-hero {
-  0% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0) rotate(0deg); }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes sun-pulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); }
-  50% { transform: translate(-50%, -50%) scale(1.05); }
-}
-
-@keyframes sun-glow {
-  0% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-}
-
-@keyframes sun-flare {
-  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) rotate(0deg); }
-  50% { opacity: 1; transform: translate(-50%, -50%) rotate(45deg); }
-}
-
-@keyframes card-enter {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-@keyframes slideDown {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(16px) scale(0.97); }
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-/* Set by the theme toggle for the duration of the switch (see Header.astro).
-   Without this, every element transitions its own colors/shadows at once and
-   the page repaints on every frame — the main cause of the laggy toggle. The
-   toggle icon keeps its own small crossfade. */
-.theme-switching *:not(.theme-icon-wrap svg),
-.theme-switching *::before,
-.theme-switching *::after {
-  transition: none !important;
-}
-
-/* Theme crossfade via View Transitions: the browser snapshots the old and new
-   page and fades between them on the compositor (no per-element repaints). */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
-}
+/* ==========================================================================
+   Controls
+   ========================================================================== */
 
 .btn {
-  font-family: var(--font-body);
-  transition: background-color 0.15s ease-out, color 0.15s ease-out, transform 0.15s ease-out, box-shadow 0.15s ease-out;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.9rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  touch-action: manipulation;
+}
+
+.btn--primary {
+  color: var(--space);
+  background: linear-gradient(135deg, #ffffff, #cfe8ff);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3), 0 10px 40px rgba(127, 216, 255, 0.3);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5), 0 14px 50px rgba(127, 216, 255, 0.45);
+}
+
+.btn--ghost {
+  color: var(--ink);
+  border-color: var(--line);
+  background: rgba(6, 9, 22, 0.45);
+}
+
+.btn--ghost:hover {
+  border-color: rgba(170, 195, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn--sm { padding: 0.6rem 1.05rem; font-size: 0.85rem; }
+.btn--block { width: 100%; }
+.btn:disabled { opacity: 0.6; cursor: progress; transform: none; }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.link-arrow::after { content: '↗'; font-size: 0.85em; color: var(--accent); }
+.link-arrow:hover { border-color: var(--accent); color: #fff; }
+
+.chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+}
+
+.chip {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ==========================================================================
+   Steps (skills / projects): one card per planet
+   ========================================================================== */
+
+.station--steps {
+  display: block;
+  padding-block: 30svh 20svh;
+}
+
+.section-head { max-width: 36rem; margin-bottom: 10svh; }
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each step is one screen of scroll; the active one sits at viewport centre
+   while the camera flies to its planet. */
+.step {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+}
+
+.step-card {
+  width: min(27rem, 100%);
+  transition: opacity 0.6s ease, transform 0.8s var(--ease-out);
+}
+
+.step-card--project { width: min(30rem, 100%); }
+
+html.js:not([data-quality='off']) .step:not(.is-active) .step-card {
+  opacity: 0.18;
+  transform: translateX(-12px) scale(0.98);
+}
+
+/* Keyboard users always see what they focus, even mid-flight. */
+html.js .step .step-card:focus-within {
+  opacity: 1;
+  transform: none;
+}
+
+.step-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.step-card__index {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+}
+
+.step-card__title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.step-card__text {
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-top: 0.75rem;
+}
+
+/* ==========================================================================
+   Without the 3D journey (reduced motion, weak GPU, user choice):
+   a compact, conventional page over the static backdrop.
+   ========================================================================== */
+
+html[data-quality='off'] .station {
+  min-height: auto;
+  padding-block: 14vh;
+}
+
+html[data-quality='off'] .station--hero { min-height: 100svh; padding-block: 0; }
+html[data-quality='off'] .station--steps { padding-block: 14vh; }
+html[data-quality='off'] .section-head { margin-bottom: 2.5rem; }
+html[data-quality='off'] .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); gap: 1.25rem; }
+html[data-quality='off'] .step { min-height: auto; }
+html[data-quality='off'] .step-card { width: 100%; height: 100%; }
+html[data-quality='off'] .panel--right { margin-left: 0; }
+html[data-quality='off'] .hud { display: none; }
+
+/* ==========================================================================
+   Mobile: the object is framed in the top half, copy in the bottom half.
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .panel--right { margin-left: 0; }
+
+  html:not([data-quality='off']) .station:not(.station--hero, .station--steps) {
+    align-items: flex-end;
+  }
+
+  /* Card pinned to the bottom of the screen while its planet is framed
+     above. Sitting at the end of a 100svh step, it only starts moving up in
+     the second half of its step, so consecutive cards never overlap. */
+  html:not([data-quality='off']) .step {
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+  }
+  html:not([data-quality='off']) .step-card {
+    position: sticky;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .glass { border-radius: 18px; background: var(--glass-strong); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .comet-primary, .comet-secondary {
-    animation: none !important;
-    opacity: 0.3 !important;
-  }
-
-  body::before, body::after {
-    animation: none !important;
-  }
-
-  body.dark-theme::after {
-    animation: none !important;
-  }
-}
-
-/* Pause the comet animations in light mode — they're invisible (opacity:0)
-   but still consume GPU cycles without this rule. The canvas starfield
-   pauses itself (see src/lib/starfield.ts). */
-body:not(.dark-theme) .comet-primary,
-body:not(.dark-theme) .comet-secondary {
-  animation-play-state: paused;
-  will-change: auto;
-}
-
-/* Mobile perf: backdrop-filter is by far the most expensive paint/composite
-   operation these components use — every element with it forces the GPU to
-   resample everything behind it, every frame it's on screen. On mobile GPUs
-   this is what makes the theme toggle (which repaints background-color across
-   the whole tree at once) feel sluggish, and it compounds with scrolling and
-   the skill-card/project-card grids, which each render several blurred
-   surfaces at once. Desktop GPUs absorb this fine, so the glass aesthetic is
-   kept there; mobile gets a solid, slightly more opaque surface instead —
-   same visual language, no blur sampling cost. */
-/* !important is required throughout this block: Astro compiles each
-   component's own <style> rules to e.g. `.skill-card[data-astro-cid-xxxx]`,
-   which outranks the plain `.skill-card` selectors below on specificity
-   alone, and `.modal-backdrop` (declared is:global) ties on specificity but
-   comes later in the concatenated stylesheet — so without !important every
-   rule in this block loses the cascade and silently never applies, on any
-   viewport. That was the actual bug: this "mobile perf" block looked
-   correct but was fully inert, so the fixes it documents (no blur, no
-   box-shadow/filter transition) were never reaching the page. */
-@media (max-width: 768px) {
-  header.scrolled,
-  .contact-form,
-  .skill-card,
-  .projects-container .project-card,
-  .modal-backdrop,
-  .modal-backdrop .close-btn,
-  .about-me-container .social-links a {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  body.dark-theme .skill-card {
-    background: rgba(20, 25, 35, 0.85) !important;
-  }
-
-  body.dark-theme .projects-container .project-card {
-    background: rgba(20, 25, 35, 0.9) !important;
-  }
-
-  body.dark-theme .contact-form {
-    background: rgba(20, 25, 35, 0.95) !important;
-  }
-
-  /* Box-shadow and filter transitions repaint every frame instead of
-     compositing on the GPU like transform/opacity do. The skill grid alone
-     has 15+ cards, each animating --card-shadow at once on theme toggle —
-     that repaint cost stacks up per card and is what makes the toggle feel
-     sluggish on phones even with backdrop-filter removed above. Let shadows
-     and the profile photo's grayscale/contrast filter snap instantly on
-     mobile; keep the cheap, compositor-friendly transitions. */
-  .skill-card {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                border-color 0.3s ease-out,
-                background 0.3s ease-out !important;
-  }
-
-  .projects-container .project-card {
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  }
-
-  .profile-img {
-    transition: border-color 0.15s ease-out !important;
   }
 }

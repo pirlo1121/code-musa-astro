@@ -1,0 +1,121 @@
+---
+import type { Profile } from '../../lib/data';
+import { site } from '../../data/site';
+
+interface Props { profile: Profile | null }
+const { profile } = Astro.props;
+const name = profile?.name ?? site.fallbackName;
+const role = profile?.profession ?? site.fallbackRole;
+---
+
+<section id="hero" class="station station--hero" aria-labelledby="hero-title">
+  <div class="hero__stage">
+    <div class="station__inner">
+      <div class="hero__content" data-hero-content>
+        <p class="eyebrow" data-intro>
+          <span class="eyebrow__dot" aria-hidden="true"></span>
+          {role}
+        </p>
+        <h1 id="hero-title" class="hero__title" data-intro data-focus-target>{name}</h1>
+        <p class="hero__tagline" data-intro>{site.tagline}</p>
+        <div class="hero__actions" data-intro>
+          <a class="btn btn--primary" href="#projects">
+            Explorar proyectos
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="#contact">Contactar</a>
+        </div>
+      </div>
+    </div>
+    <a class="scroll-cue" href="#about" data-intro>
+      <span class="scroll-cue__line" aria-hidden="true"></span>
+      Desplázate para iniciar el viaje
+    </a>
+  </div>
+</section>
+
+<style>
+  .station--hero {
+    padding-block: 0;
+    min-height: 170svh;
+    align-items: flex-start;
+  }
+
+  .hero__stage {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero__content { max-width: 40rem; }
+
+  .hero__title {
+    font-size: clamp(2.8rem, 7.5vw, 6.2rem);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+    margin: 1.1rem 0 1.4rem;
+    background: linear-gradient(180deg, #ffffff 30%, #b8c6ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-wrap: balance;
+  }
+
+  .hero__tagline {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 32rem;
+    text-wrap: pretty;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.2rem;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+  }
+
+  .scroll-cue__line {
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(to bottom, transparent, var(--ink-2));
+    animation: cue 2.4s ease-in-out infinite;
+    transform-origin: top;
+  }
+
+  @keyframes cue {
+    0% { transform: scaleY(0); opacity: 0; }
+    40% { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(1) translateY(20px); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue__line { animation: none; }
+  }
+
+  @media (max-width: 900px) {
+    /* The star sits in the upper half on phones; copy anchors to the bottom. */
+    .hero__stage { align-items: flex-end; padding-bottom: 7rem; }
+  }
+</style>
