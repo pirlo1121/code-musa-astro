@@ -1,10 +1,7 @@
 ---
 import '../styles/global.css';
-// Self-hosted via @fontsource — removes 2 external round-trips (fonts.googleapis.com +
-// fonts.gstatic.com) that a Google Fonts <link> would otherwise cost on every page load.
-// latin-only subset (no cyrillic/greek/vietnamese), and only the 4 weights the
-// CSS actually requests (400 default body text, 500/600/700 explicit — 300 is
-// never used anywhere in the project).
+// Self-hosted via @fontsource — no external font round-trips. latin-only
+// subset and only the weights the CSS uses.
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import '@fontsource/inter/latin-600.css';
@@ -18,7 +15,7 @@ interface Props {
 
 const {
   title       = "Maicol Bautista – Software Developer",
-  description = "Portfolio de Maicol Bautista, desarrollador de software especializado en TypeScript, Angular, Astro y Node.js. Proyectos, habilidades y contacto.",
+  description = "Portfolio de Maicol Bautista, desarrollador de software: un viaje por el universo a través de sus proyectos, stack y trayectoria.",
   ogImage     = "/assets/og-image.jpg",
 } = Astro.props;
 
@@ -30,7 +27,9 @@ const canonical = siteURL;
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#02030a">
+    <meta name="color-scheme" content="dark">
 
     <!-- Primary meta -->
     <title>{title}</title>
@@ -53,20 +52,13 @@ const canonical = siteURL;
     <meta name="twitter:description" content={description}>
     <meta name="twitter:image"       content={`${siteURL}${ogImage}`}>
 
-    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/fav.svg">
-    <!-- apple-touch-icon intentionally omitted: no 180x180 PNG asset exists yet.
-         A dead reference here costs iOS Safari an extra 404 request on every load.
-         Add public/apple-touch-icon.png and restore this tag when the asset is ready. -->
 
-    <!-- Resource hints -->
     <link rel="dns-prefetch" href="https://api.code-musa.com">
     <link rel="preconnect" href="https://api.code-musa.com" crossorigin>
 
-    <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap.xml">
 
-    <!-- JSON-LD structured data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -74,39 +66,31 @@ const canonical = siteURL;
         "name": "Maicol Bautista",
         "url": "https://code-musa.com",
         "jobTitle": "Software Developer",
-        "knowsAbout": ["TypeScript", "Angular", "Astro", "Node.js", "MongoDB", "Docker", "Python"],
+        "knowsAbout": ["JavaScript", "Node.js", "Express", "MongoDB", "AWS", "Linux", "Git"],
         "image": "https://code-musa.com/assets/profile.jpg",
         "sameAs": []
       }
     </script>
-  </head>
-  <body class="dark-theme">
-    <!-- Blocking theme restore — runs before first paint to prevent FOUC -->
-    <!-- is:inline keeps this a classic blocking script; without it Astro emits
-         type="module", which is deferred and lets dark mode flash first. -->
+
+    <!-- Progressive enhancement: the cinematic journey (fixed panels over a
+         WebGL universe) only switches on when WebGL2 exists. Without it — or
+         without JS — the same content renders as a normal scrolling page.
+         Blocking + inline so the layout is decided before first paint. -->
     <script is:inline>
-      (function() {
+      (function () {
         try {
-          if (localStorage.getItem('theme') === 'light') {
-            document.body.classList.remove('dark-theme');
-          }
+          if (/[?&]flat\b/.test(location.search)) return;
+          var c = document.createElement('canvas');
+          var gl = c.getContext('webgl2');
+          if (!gl) return;
+          var lose = gl.getExtension('WEBGL_lose_context');
+          if (lose) lose.loseContext();
+          document.documentElement.classList.add('journey');
         } catch (e) {}
       })();
     </script>
-
-    <div class="starfield">
-      <canvas id="starfield-canvas" aria-hidden="true"></canvas>
-      <div class="comet-primary"></div>
-      <div class="comet-secondary"></div>
-    </div>
-
+  </head>
+  <body>
     <slot />
-
-    <script>
-      import { initStarfield } from '../lib/starfield';
-
-      const starCanvas = document.getElementById('starfield-canvas');
-      if (starCanvas instanceof HTMLCanvasElement) initStarfield(starCanvas);
-    </script>
   </body>
 </html>

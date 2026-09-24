@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import Chapter from './Chapter.astro';
+import Panel from './Panel.astro';
+import type { Stop } from '../data/journey';
+import type { Profile } from '../lib/data';
+
+interface Props {
+  stops: Stop[];
+  profile: Profile | null;
+}
+
+const { stops, profile } = Astro.props;
+---
+
+<Chapter id="about" stops={stops} label="Sobre mí">
+  <Panel stop={stops[0]} label="Origen">
+    <p class="kicker" data-anim>Planeta 01 · Origen</p>
+    <div class="about__head" data-anim>
+      {profile?.image ? (
+        <Image
+          src={profile.image}
+          alt={`Foto de ${profile.name}`}
+          width={96}
+          height={96}
+          class="about__avatar"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <img src="/assets/placeholder.svg" alt="" width="96" height="96" class="about__avatar" loading="lazy" decoding="async" />
+      )}
+      <div>
+        <h2>Sobre mí</h2>
+        <p class="muted">{profile?.profession ?? 'Software Developer'}</p>
+      </div>
+    </div>
+    <p class="about__bio" data-anim>
+      {profile?.bio ?? 'Desarrollador de software enfocado en construir productos sólidos, de la API a la interfaz.'}
+    </p>
+    {(profile?.socialLinks?.github || profile?.socialLinks?.linkedin) && (
+      <div class="links" data-anim>
+        {profile?.socialLinks?.github && (
+          <a href={profile.socialLinks.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        )}
+        {profile?.socialLinks?.linkedin && (
+          <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+        )}
+      </div>
+    )}
+  </Panel>
+</Chapter>

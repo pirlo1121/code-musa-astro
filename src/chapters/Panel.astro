@@ -1,0 +1,26 @@
+---
+// The DOM half of a stop. `side` sets where the text sits so the 3D object
+// (shifted the other way by the camera rig) stays visible.
+import type { Stop } from '../data/journey';
+
+interface Props {
+  stop: Stop;
+  label: string;
+  side?: 'left' | 'center';
+  variant?: 'card' | 'bare' | 'holo';
+}
+
+const { stop, label, side = 'left', variant = 'card' } = Astro.props;
+---
+
+<div
+  class={`panel panel--${side}`}
+  data-stop={stop.index}
+  data-slot={stop.slot}
+  data-chapter-id={stop.chapter}
+  data-label={label}
+>
+  <div class={`panel__body panel__body--${variant}`}>
+    <slot />
+  </div>
+</div>

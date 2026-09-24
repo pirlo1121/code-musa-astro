@@ -1,0 +1,30 @@
+---
+import Chapter from './Chapter.astro';
+import Panel from './Panel.astro';
+import type { Stop } from '../data/journey';
+import { experience } from '../data/experience';
+
+interface Props {
+  stops: Stop[];
+}
+
+const { stops } = Astro.props;
+const total = String(experience.length).padStart(2, '0');
+---
+
+<Chapter id="experience" stops={stops} label="Experiencia">
+  {experience.map((e, i) => (
+    <Panel stop={stops[i]} label="Trayectoria">
+      <article class="xp">
+        <p class="kicker" data-anim>Estrella {String(i + 1).padStart(2, '0')} / {total} · Trayectoria</p>
+        <p class="xp__period" data-anim>{e.period}</p>
+        <h3 data-anim>{e.role}</h3>
+        <p class="muted" data-anim>{e.org}</p>
+        <p data-anim>{e.summary}</p>
+        <ul class="tags" data-anim>
+          {e.tags.map((t) => <li>{t}</li>)}
+        </ul>
+      </article>
+    </Panel>
+  ))}
+</Chapter>
