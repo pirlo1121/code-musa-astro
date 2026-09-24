@@ -1,48 +1,159 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hud from '../chapters/Hud.astro';
-import Hero from '../chapters/Hero.astro';
-import About from '../chapters/About.astro';
-import Skills from '../chapters/Skills.astro';
-import Projects from '../chapters/Projects.astro';
-import BlackHole from '../chapters/BlackHole.astro';
-import Experience from '../chapters/Experience.astro';
-import Contact from '../chapters/Contact.astro';
-import Universe from '../universe/Universe';
-import { getProfile, getProjects } from '../lib/data';
-import { buildStops, type ChapterId } from '../data/journey';
-import { skills } from '../data/skills';
-import { experience } from '../data/experience';
-
-const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
-
-const counts = { skills: skills.length, projects: projects.length, experience: experience.length };
-const stops = buildStops(counts);
-const of = (id: ChapterId) => stops.filter((s) => s.chapter === id);
-
-// The island only needs what shapes the scene, never the full payload
-const galaxies = projects.map((p) => ({ id: p._id, name: p.name }));
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AboutMe from '../components/AboutMe.astro';
+import Projects from '../components/Projects.astro';
+import Skills from '../components/Skills.astro';
+import Contact from '../components/Contact.astro';
+import ProjectModal from '../components/ProjectModal.astro';
 ---
 
-<BaseLayout>
-  <div class="universe" aria-hidden="true">
-    <Universe client:only="react" counts={counts} galaxies={galaxies} />
-  </div>
+<BaseLayout title="Maicol Bautista">
+  <main class="content-container">
+    <Header />
 
-  <Hud />
+    <section id="about-me" class="scroll-section reveal">
+      <AboutMe />
+    </section>
 
-  <main class="journey-track">
-    <Hero stops={of('hero')} profile={profile} />
-    <About stops={of('about')} profile={profile} />
-    <Skills stops={of('skills')} />
-    <Projects stops={of('projects')} projects={projects} />
-    <BlackHole stops={of('blackhole')} />
-    <Experience stops={of('experience')} />
-    <Contact stops={of('contact')} profile={profile} />
+    <section id="projects" class="scroll-section reveal">
+      <Projects />
+    </section>
+
+    <section id="skills" class="scroll-section reveal">
+      <Skills />
+    </section>
+
+    <section id="contact" class="scroll-section reveal">
+      <Contact />
+    </section>
   </main>
+
+  <Footer />
+  <ProjectModal />
 </BaseLayout>
 
+<style>
+  .content-container {
+    padding-top: 100px;
+    min-height: 100vh;
+  }
+
+  .scroll-section {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 0;
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Skip rendering off-screen sections until they approach the viewport.
+     Reduces initial paint time and main-thread work for below-fold content. */
+  #projects, #skills, #contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 700px;
+  }
+
+  @media (max-width: 768px) {
+    .content-container { padding-top: 120px; }
+    .scroll-section { padding: 3rem 0; min-height: 50vh; }
+  }
+
+  @media (max-width: 480px) {
+    .content-container { padding-top: 110px; }
+    .scroll-section { padding: 2rem 0; }
+  }
+</style>
+
 <script>
-  import { initJourney } from '../scroll/runtime';
-  initJourney();
+  // Intersection Observer for scroll reveals (once pattern)
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+        // Free GPU memory after transition completes
+        entry.target.addEventListener('transitionend', () => {
+          entry.target.style.willChange = 'auto';
+        }, { once: true });
+      }
+    });
+  }, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -60px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Project Modal logic
+  const modal = document.getElementById('project-modal');
+  const modalImg = document.getElementById('modal-img');
+  const modalTitle = document.getElementById('modal-title');
+  const modalSubtitle = document.getElementById('modal-subtitle');
+  const modalDescription = document.getElementById('modal-description');
+  const modalTags = document.getElementById('modal-tags');
+  const modalRepo = document.getElementById('modal-repo');
+  const modalDeploy = document.getElementById('modal-deploy');
+  const modalClose = document.getElementById('modal-close');
+
+  function openModal(project) {
+    modalImg.src = project.modalImage || '/assets/project-placeholder.svg';
+    modalImg.alt = project.name;
+    modalTitle.textContent = project.name;
+    modalSubtitle.textContent = project.subtitle;
+    modalDescription.textContent = project.description;
+
+    const stack = project.stack.flatMap(s => s.split(' '));
+    modalTags.innerHTML = stack.map(s => `<span class="tag">${s}</span>`).join('');
+
+    modalRepo.href = project.repository;
+
+    if (project.deploy) {
+      modalDeploy.style.display = '';
+      modalDeploy.href = project.deploy;
+    } else {
+      modalDeploy.style.display = 'none';
+    }
+
+    modal.style.display = '';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.add('closing');
+    modal.addEventListener('animationend', () => {
+      modal.style.display = 'none';
+      modal.classList.remove('closing');
+      document.body.style.overflow = '';
+    }, { once: true });
+  }
+
+  window.addEventListener('open-project', (e) => {
+    openModal(e.detail);
+  });
+
+  modalClose.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal && !modal.classList.contains('closing')) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.style.display !== 'none' && !modal.classList.contains('closing')) {
+      closeModal();
+    }
+  });
 </script>

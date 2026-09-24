@@ -1,0 +1,465 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { getProjects } from '../lib/data';
+
+const projects = await getProjects();
+const PAGE_SIZE = 3;
+const totalPages = Math.ceil(projects.length / PAGE_SIZE);
+
+// Pre-optimize a larger variant for the modal too, so it never falls back to
+// the raw, unresized S3 original when a card is opened.
+const modalImages: Record<string, string> = {};
+for (const p of projects) {
+  if (!p.image) continue;
+  const optimized = await getImage({ src: p.image, width: 800, height: 350 });
+  modalImages[p._id] = optimized.src;
+}
+
+// Only what the client-side modal actually reads — no raw S3 URLs shipped.
+const projectsForClient = projects.map(p => ({
+  _id: p._id,
+  name: p.name,
+  description: p.description,
+  stack: p.stack,
+  repository: p.repository,
+  deploy: p.deploy,
+  modalImage: modalImages[p._id] ?? '/assets/project-placeholder.svg',
+}));
+---
+
+<section class="projects-container">
+  <h2>My Projects</h2>
+
+  {projects.length === 0 ? (
+    <p>No projects found.</p>
+  ) : (
+    <Fragment>
+    <div id="projects-grid" class="projects-grid">
+      {projects.map((p, i) => (
+        <div class="project-card" data-page={Math.floor(i / PAGE_SIZE)} style={i >= PAGE_SIZE ? { display: 'none' } : undefined}>
+          {p.image ? (
+            <Image src={p.image} alt={p.name} width={400} height={200} loading="lazy" decoding="async" />
+          ) : (
+            <img src="/assets/project-placeholder.svg" alt={p.name} width="400" height="200" loading="lazy" decoding="async" />
+          )}
+          <div class="card-content">
+            <h3>{p.name}</h3>
+
+            <button class="read-more" data-project-id={p._id}>
+              Ver más
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+              </svg>
+            </button>
+
+            {p.stack && p.stack.length > 0 && (
+              <div class="card-tags">
+                {p.stack.slice(0, 4).map(t => <span class="tag">{t}</span>)}
+              </div>
+            )}
+
+            <div class="card-divider"></div>
+
+            <div class="links">
+              <a href={p.repository} target="_blank" rel="noopener noreferrer" class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
+                    0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
+                    -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
+                    .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.381 1.236-3.221
+                    -.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404
+                    1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176
+                    .77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222
+                    v3.293c0 .319.192.694.801.576C20.565 21.796 24 17.3 24 12c0-6.63-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+              {p.deploy && (
+                <a href={p.deploy} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                  Live
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {totalPages > 1 && (
+      <div id="pagination-controls" class="pagination-controls">
+        <button id="prev-page" class="btn-nav" disabled>Previous</button>
+        <span id="page-indicator" class="page-indicator">Page 1 of {totalPages}</span>
+        <button id="next-page" class="btn-nav">Next</button>
+      </div>
+    )}
+    </Fragment>
+  )}
+</section>
+
+<!-- is:global so styles apply to dynamically rendered cards -->
+<style is:global>
+  .projects-container {
+    padding: 0 2rem;
+    background: transparent;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  .projects-container h2 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-color);
+    transition: text-shadow 0.15s ease-out, color 0.15s ease-out;
+    position: relative;
+    padding-bottom: 1rem;
+    text-align: center;
+  }
+
+  .projects-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 2px;
+    transform: translateX(-50%) scaleX(0.7);
+    transform-origin: center;
+    transition: transform 0.3s ease-out;
+  }
+
+  .projects-container h2:hover::after {
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  body.dark-theme .projects-container h2 {
+    text-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .projects-container .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .projects-container .project-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease-out;
+    background: var(--surface-bg);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  body.dark-theme .projects-container .project-card {
+    background: rgba(20, 25, 35, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .projects-container .project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--hover-shadow);
+    will-change: transform;
+  }
+
+  .projects-container .project-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: opacity 0.15s ease-out;
+  }
+
+  .projects-container .project-card:hover img {
+    opacity: 1;
+  }
+
+  .projects-container .card-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .projects-container .card-content h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+  }
+
+  .projects-container .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .projects-container .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--accent-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+    font-family: var(--font-body);
+  }
+
+  .projects-container .read-more:hover {
+    color: var(--text-primary);
+  }
+
+  .projects-container .read-more svg {
+    transition: transform 0.2s ease;
+  }
+
+  .projects-container .read-more:hover svg {
+    transform: translateX(4px);
+  }
+
+  body.dark-theme .projects-container .read-more {
+    color: var(--accent-secondary);
+  }
+
+  body.dark-theme .projects-container .read-more:hover {
+    color: var(--accent-primary);
+    text-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
+  }
+
+  .projects-container .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+    align-content: flex-start;
+  }
+
+  .projects-container .card-tags .tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+  }
+
+  body.dark-theme .projects-container .card-tags .tag {
+    background: rgba(139, 92, 246, 0.08);
+    color: #c4b5fd;
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+
+  .projects-container .card-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0 0 1rem 0;
+  }
+
+  body.dark-theme .projects-container .card-divider {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .projects-container .links {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .projects-container .links .btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 7px;
+    color: var(--text-secondary);
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .projects-container .links .btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+    transform: translateY(-1px);
+  }
+
+  body.dark-theme .projects-container .links .btn {
+    color: var(--text-secondary);
+    border-color: rgba(255, 255, 255, 0.12);
+    background: transparent;
+  }
+
+  body.dark-theme .projects-container .links .btn:hover {
+    color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+  }
+
+  .projects-container .links .btn-primary {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: 1px solid var(--text-primary);
+  }
+
+  .projects-container .links .btn-primary:hover {
+    color: var(--bg-primary);
+    opacity: 0.88;
+    border-color: var(--text-primary);
+  }
+
+  body.dark-theme .projects-container .links .btn-primary {
+    background: var(--accent-primary);
+    color: #14121f;
+    border: 1px solid var(--accent-primary);
+  }
+
+  body.dark-theme .projects-container .links .btn-primary:hover {
+    color: #14121f;
+    opacity: 0.9;
+    border-color: var(--accent-primary);
+  }
+
+  .projects-container .links .btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .projects-container .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .projects-container .btn-nav {
+    padding: 0.5rem 1rem;
+    background: var(--surface-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
+    font-family: var(--font-body);
+  }
+
+  body.dark-theme .projects-container .btn-nav {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .projects-container .btn-nav:hover:not(:disabled) {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+  }
+
+  .projects-container .btn-nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .projects-container .page-indicator {
+    font-weight: bold;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .projects-container { padding: 0 1.5rem; }
+    .projects-container .projects-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .projects-container h2 { font-size: 2rem; }
+    .projects-container .project-card img { height: 180px; }
+    .projects-container .pagination-controls { gap: 1rem; }
+  }
+
+  @media (max-width: 480px) {
+    .projects-container { padding: 0 1rem; }
+    .projects-container h2 { font-size: 1.75rem; margin-bottom: 1.5rem; }
+    .projects-container .card-content { padding: 1.25rem; }
+    .projects-container .links .btn { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+    .projects-container .btn-nav { padding: 0.4rem 0.8rem; font-size: 0.9rem; }
+  }
+</style>
+
+<script define:vars={{ projects: projectsForClient, PAGE_SIZE }}>
+  const grid = document.getElementById('projects-grid');
+  if (grid) {
+    const cards       = Array.from(grid.querySelectorAll('.project-card'));
+    const pagination  = document.getElementById('pagination-controls');
+    const prevBtn     = document.getElementById('prev-page');
+    const nextBtn     = document.getElementById('next-page');
+    const pageIndicator = document.getElementById('page-indicator');
+    const totalPages  = Math.ceil(projects.length / PAGE_SIZE);
+    let currentPage   = 0;
+
+    function renderPage() {
+      cards.forEach(card => {
+        card.style.display = Number(card.dataset.page) === currentPage ? '' : 'none';
+      });
+      if (pageIndicator) pageIndicator.textContent = `Page ${currentPage + 1} of ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = currentPage === 0;
+      if (nextBtn) nextBtn.disabled = currentPage === totalPages - 1;
+    }
+
+    prevBtn?.addEventListener('click', () => {
+      if (currentPage > 0) { currentPage--; renderPage(); }
+    });
+
+    nextBtn?.addEventListener('click', () => {
+      if (currentPage < totalPages - 1) { currentPage++; renderPage(); }
+    });
+
+    grid.querySelectorAll('.read-more').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const project = projects.find(p => p._id === btn.dataset.projectId);
+        if (project) {
+          window.dispatchEvent(new CustomEvent('open-project', { detail: project }));
+        }
+      });
+    });
+  }
+</script>
