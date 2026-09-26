@@ -7,9 +7,9 @@ import { BlendFunction, DepthOfFieldEffect, Effect, ToneMappingMode } from 'post
 import { MathUtils, PerspectiveCamera, Uniform, Vector2, Vector3 } from 'three';
 import { sceneRefs } from '../../lib/scene-refs';
 import { stationDistance } from '../../lib/store';
-import { PORTAL, STATIONS } from '../../scenes/layout';
+import { BLACK_HOLE, STATIONS } from '../../scenes/layout';
 
-// Gravitational lensing around the wormhole: a pure UV displacement merged
+// Gravitational lensing around the black hole: a pure UV displacement merged
 // into the effect pass, so it costs one texture lookup, not an extra pass.
 const lensingShader = /* glsl */ `
 uniform vec2 uCenter;
@@ -41,7 +41,7 @@ class LensingEffect extends Effect {
   }
 }
 
-const WORMHOLE = 5;
+const BLACK_HOLE_INDEX = 5;
 
 export default function Effects({ depthOfField }: { depthOfField: boolean }) {
   const lensing = useMemo(() => new LensingEffect(), []);
@@ -55,15 +55,15 @@ export default function Effects({ depthOfField }: { depthOfField: boolean }) {
     dof.current?.target?.copy(sceneRefs.focusPoint);
 
     const uniforms = lensing.uniforms;
-    const proximity = 1 - MathUtils.smoothstep(stationDistance(WORMHOLE), 0.3, 1.2);
-    tmp.center.copy(STATIONS[WORMHOLE].center).project(cam);
+    const proximity = 1 - MathUtils.smoothstep(stationDistance(BLACK_HOLE_INDEX), 0.3, 1.2);
+    tmp.center.copy(STATIONS[BLACK_HOLE_INDEX].center).project(cam);
     const inFront = tmp.center.z < 1 && tmp.center.z > -1;
     if (proximity <= 0 || !inFront) {
       uniforms.get('uStrength')!.value = 0;
       return;
     }
     tmp.right.setFromMatrixColumn(cam.matrixWorld, 0);
-    tmp.edge.copy(STATIONS[WORMHOLE].center).addScaledVector(tmp.right, PORTAL.radius).project(cam);
+    tmp.edge.copy(STATIONS[BLACK_HOLE_INDEX].center).addScaledVector(tmp.right, BLACK_HOLE.radius * 1.4).project(cam);
     const aspect = size.width / size.height;
     (uniforms.get('uCenter')!.value as Vector2).set(tmp.center.x * 0.5 + 0.5, tmp.center.y * 0.5 + 0.5);
     uniforms.get('uRadius')!.value = Math.abs(tmp.edge.x - tmp.center.x) * 0.5 * aspect;

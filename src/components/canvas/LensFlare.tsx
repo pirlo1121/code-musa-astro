@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, type RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { AdditiveBlending, Color, MathUtils, Mesh, Object3D, PerspectiveCamera, ShaderMaterial, Vector3 } from 'three';
-import { flareFragment } from '../../shaders/hologram';
-import { quadVertex } from '../../shaders/planet';
+import { flareFragment, quadVertex } from '../../shaders/flare';
 import { stationDistance } from '../../lib/store';
 
 // Ghosts along the line from the light through the screen centre. `t` is

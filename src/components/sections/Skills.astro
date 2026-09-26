@@ -2,75 +2,87 @@
 import { skills } from '../../data/skills';
 ---
 
-<section id="skills" class="station station--steps" aria-labelledby="skills-title">
+<section id="skills" class="station station--grid" aria-labelledby="skills-title">
   <div class="station__inner">
     <header class="section-head" data-reveal>
-      <p class="kicker" data-reveal-item>03 — Sistema planetario</p>
+      <p class="kicker" data-reveal-item>03 — Nebulosa esmeralda</p>
       <h2 id="skills-title" class="section-title" data-reveal-item data-focus-target>Habilidades</h2>
       <p class="section-lede" data-reveal-item>
-        Cada tecnología es un mundo en órbita. Sigue bajando para acercarte a cada planeta.
+        Las tecnologías con las que construyo, todas en la misma nube.
       </p>
     </header>
 
-    <ol class="steps" data-step-group="skills" role="list">
-      {skills.map((skill, i) => (
-        <li class="step" data-step>
-          <article class="step-card glass" aria-labelledby={`skill-${skill.id}`}>
-            <div class="step-card__meta">
-              <span class="step-card__index">{String(i + 1).padStart(2, '0')} / {String(skills.length).padStart(2, '0')}</span>
-              <span class="planet-dot" style={`--dot: ${skill.atmosphere}`} aria-hidden="true"></span>
-            </div>
-            <h3 id={`skill-${skill.id}`} class="step-card__title">{skill.name}</h3>
-            <div class="meter">
-              <div class="meter__head">
-                <span class="label">{skill.levelLabel}</span>
-                <span class="meter__value">{skill.level}%</span>
-              </div>
-              <div
-                class="meter__track"
-                role="meter"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow={skill.level}
-                aria-label={`Nivel en ${skill.name}`}
-              >
-                <span class="meter__fill" style={`--level: ${skill.level / 100}; --dot: ${skill.atmosphere}`}></span>
-              </div>
-            </div>
-            <p class="step-card__text">{skill.description}</p>
-          </article>
+    <ul class="skill-grid" role="list" data-reveal data-inview>
+      {skills.map((skill) => (
+        <li class="skill-card glass" data-reveal-item>
+          <div class="skill-card__head">
+            <span class="skill-dot" style={`--dot: ${skill.color}`} aria-hidden="true"></span>
+            <h3 class="skill-card__title">{skill.name}</h3>
+            <span class="skill-card__value">{skill.level}%</span>
+          </div>
+          <div
+            class="meter"
+            role="meter"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={skill.level}
+            aria-label={`Nivel en ${skill.name}: ${skill.levelLabel}`}
+          >
+            <span class="meter__fill" style={`--level: ${skill.level / 100}; --dot: ${skill.color}`}></span>
+          </div>
+          <p class="label skill-card__level">{skill.levelLabel}</p>
+          <p class="skill-card__text">{skill.description}</p>
         </li>
       ))}
-    </ol>
+    </ul>
   </div>
 </section>
 
 <style>
-  .planet-dot {
-    width: 12px;
-    height: 12px;
+  .skill-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+  }
+
+  .skill-card {
+    padding: 1.35rem 1.4rem;
+    border-radius: 18px;
+  }
+
+  .skill-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .skill-dot {
+    flex: none;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: var(--dot);
     box-shadow: 0 0 14px var(--dot);
   }
 
-  .meter { margin: 1.25rem 0 1.25rem; }
-
-  .meter__head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.6rem;
+  .skill-card__title {
+    flex: 1;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
   }
 
-  .meter__value {
+  .skill-card__value {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
+    font-size: 0.95rem;
     color: var(--ink);
   }
 
-  .meter__track {
+  .meter {
     height: 4px;
+    margin: 0.9rem 0 0.6rem;
     border-radius: 99px;
     background: rgba(255, 255, 255, 0.08);
     overflow: hidden;
@@ -85,11 +97,18 @@ import { skills } from '../../data/skills';
     box-shadow: 0 0 12px var(--dot);
     transform-origin: left;
     transform: scaleX(var(--level));
-    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+    transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
   }
 
-  /* Animate the fill each time the planet comes into focus. */
-  :global(html.js:not([data-quality='off'])) .step:not(.is-active) .meter__fill {
+  /* All meters fill together when the nebula comes into view. */
+  :global(html.js:not([data-quality='off'])) .skill-grid:not(.is-inview) .meter__fill {
     transform: scaleX(0);
+  }
+
+  .skill-card__text {
+    margin-top: 0.6rem;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    line-height: 1.6;
   }
 </style>

@@ -11,12 +11,10 @@ import Projects from '../components/sections/Projects.astro';
 import Experience from '../components/sections/Experience.astro';
 import Contact from '../components/sections/Contact.astro';
 import { getProfile, getProjects, type ProjectView } from '../lib/data';
-import type { ProjectBody } from '../scenes/types';
 
 const [profile, projects] = await Promise.all([getProfile(), getProjects()]);
 
-// Screenshots are resized and re-encoded at build time (16:9 WebP), then
-// served same-origin: the 3D hologram can use them as textures without CORS.
+// Screenshots are resized and re-encoded at build time (16:9 WebP).
 const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => {
   if (!p.image) return { ...p, shot: null };
   try {
@@ -27,12 +25,10 @@ const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => 
     return { ...p, shot: null };
   }
 }));
-
-const bodies: ProjectBody[] = projectViews.map((p) => ({ id: p._id, name: p.name, image: p.shot }));
 ---
 
 <BaseLayout>
-  <SpaceBackdrop projects={bodies} />
+  <SpaceBackdrop />
   <Header />
 
   <main id="main" class="journey">

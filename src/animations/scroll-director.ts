@@ -93,24 +93,15 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
     onRefresh: (self) => { measure(); update(self.scroll()); },
   });
 
-  // --- Steps: which planet is in focus -------------------------------------
-  // Steps are contiguous blocks; a step is active while it crosses the
-  // viewport centre, so exactly one is active at a time with no gaps.
-  document.querySelectorAll<HTMLElement>('[data-step-group]').forEach((group) => {
-    const kind = group.dataset.stepGroup as 'skills' | 'projects';
-    const key = kind === 'skills' ? 'activeSkill' : 'activeProject';
-    const steps = group.querySelectorAll<HTMLElement>('[data-step]');
-    steps.forEach((step, index) => {
-      ScrollTrigger.create({
-        trigger: step,
-        start: 'top center',
-        end: 'bottom center',
-        onToggle: (self) => {
-          step.classList.toggle('is-active', self.isActive);
-          if (self.isActive) frame[key] = index;
-          else if (frame[key] === index) frame[key] = -1;
-        },
-      });
+  // --- In-view groups ----------------------------------------------------
+  // Skills and projects appear all at once when their nebula is on screen;
+  // `is-inview` lets CSS play one-off effects such as the skill meters.
+  document.querySelectorAll<HTMLElement>('[data-inview]').forEach((el) => {
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      end: 'bottom 15%',
+      onToggle: (self) => el.classList.toggle('is-inview', self.isActive),
     });
   });
 
@@ -165,6 +156,11 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
       focus();
     }
   });
+
+  // --- Modal lock ----------------------------------------------------------
+  // Project details open in a <dialog>; the journey must not scroll under it.
+  window.addEventListener('space:lock', () => lenis?.stop());
+  window.addEventListener('space:unlock', () => lenis?.start());
 
   // --- Pointer parallax ----------------------------------------------------
   if (window.matchMedia('(pointer: fine)').matches) {

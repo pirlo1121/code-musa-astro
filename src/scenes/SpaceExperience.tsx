@@ -9,15 +9,11 @@ import { SpaceDust } from '../components/canvas/SpaceDust';
 import { NebulaCloud } from '../components/canvas/NebulaCloud';
 import { PerformanceMonitor } from '../components/canvas/PerformanceMonitor';
 import HeroStar from './HeroStar';
-import type { ProjectBody } from './types';
 
 // The hero ships in the first chunk; every other station is code-split and
 // fetched while the visitor is still reading the hero.
 const NebulaScene = lazy(() => import('./NebulaScene'));
-const SkillSystem = lazy(() => import('./SkillSystem'));
-const ProjectGalaxy = lazy(() => import('./ProjectGalaxy'));
-const SpaceStation = lazy(() => import('./SpaceStation'));
-const Wormhole = lazy(() => import('./Wormhole'));
+const BlackHole = lazy(() => import('./BlackHole'));
 // Post-processing is the single heaviest dependency; tiers without it never download it.
 const Effects = lazy(() => import('../components/canvas/Effects'));
 
@@ -29,11 +25,10 @@ const HAZE = [
 ];
 const HAZE_SCALE: [number, number] = [60, 120];
 
-interface Props {
-  projects: ProjectBody[];
-}
+// Stations 1–4 are nebulae (about, skills, projects, experience).
+const NEBULA_STATIONS = [1, 2, 3, 4];
 
-export default function SpaceExperience({ projects }: Props) {
+export default function SpaceExperience() {
   const tier = useQualityTier();
   const [ready, setReady] = useState(false);
   const [mountRest, setMountRest] = useState(false);
@@ -82,11 +77,8 @@ export default function SpaceExperience({ projects }: Props) {
       <HeroStar />
       {mountRest && (
         <Suspense fallback={null}>
-          <NebulaScene />
-          <SkillSystem />
-          <ProjectGalaxy projects={projects} />
-          <SpaceStation />
-          <Wormhole />
+          {NEBULA_STATIONS.map((i) => <NebulaScene key={i} index={i} />)}
+          <BlackHole />
         </Suspense>
       )}
       {cfg.postprocessing && (

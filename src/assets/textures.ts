@@ -1,4 +1,4 @@
-import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, SRGBColorSpace, type Texture } from 'three';
+import { CanvasTexture, LinearFilter, LinearMipmapLinearFilter, SRGBColorSpace, type Texture } from 'three';
 
 // Procedural textures, generated once on the client and cached. The whole
 // universe ships with zero image downloads: the only bitmaps loaded are the
@@ -21,13 +21,6 @@ function rng(seed: number) {
     t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
-}
-
-/** Deterministic 0–1 value from any string (project ids → planet traits). */
-export function hashString(str: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
-  return (h >>> 0) / 4294967295;
 }
 
 export { rng };
@@ -112,44 +105,4 @@ export function getDistantGalaxyTexture(variant: number): Texture {
     tex.colorSpace = SRGBColorSpace;
     return tex;
   });
-}
-
-/** Station hull: dark panels with rows of warm lit windows. Also used as the
- *  emissive map, so only the windows glow. */
-export function getHullTextures(): { map: Texture; emissive: Texture } {
-  const map = cached('hull-map', () => makeHull(false));
-  const emissive = cached('hull-emissive', () => makeHull(true));
-  return { map, emissive };
-}
-
-function makeHull(emissiveOnly: boolean): Texture {
-  const w = 512, h = 64;
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext('2d')!;
-  const rand = rng(42);
-  ctx.fillStyle = emissiveOnly ? '#000' : '#6c717a';
-  ctx.fillRect(0, 0, w, h);
-  if (!emissiveOnly) {
-    for (let x = 0; x < w; x += 32) {
-      for (let y = 0; y < h; y += 16) {
-        const g = 90 + Math.floor(rand() * 40);
-        ctx.fillStyle = `rgb(${g},${g + 3},${g + 8})`;
-        ctx.fillRect(x + 1, y + 1, 30, 14);
-      }
-    }
-  }
-  for (let x = 4; x < w; x += 8) {
-    for (const y of [22, 40]) {
-      if (rand() < 0.3) continue;
-      ctx.fillStyle = rand() < 0.85 ? '#ffd9a0' : '#9fd8ff';
-      ctx.fillRect(x, y, 4, 3);
-    }
-  }
-  const tex = new CanvasTexture(canvas);
-  tex.colorSpace = SRGBColorSpace;
-  tex.wrapS = tex.wrapT = RepeatWrapping;
-  tex.repeat.set(6, 1);
-  tex.anisotropy = 4;
-  return tex;
 }

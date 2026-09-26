@@ -9,7 +9,6 @@ export interface TierConfig {
   multisampling: number;
   stars: number;
   dust: number;
-  galaxyStars: number;
   nebulaPuffs: number;
   heroParticles: number;
   sphereDetail: number;
@@ -18,15 +17,15 @@ export interface TierConfig {
 export const TIER_CONFIG: Record<Exclude<QualityTier, 'off'>, TierConfig> = {
   high: {
     dpr: [1, 1.75], postprocessing: true, depthOfField: true, multisampling: 0,
-    stars: 9000, dust: 1400, galaxyStars: 32000, nebulaPuffs: 64, heroParticles: 1400, sphereDetail: 64,
+    stars: 9000, dust: 1400, nebulaPuffs: 64, heroParticles: 1400, sphereDetail: 64,
   },
   medium: {
     dpr: [1, 1.35], postprocessing: true, depthOfField: false, multisampling: 0,
-    stars: 5500, dust: 800, galaxyStars: 18000, nebulaPuffs: 40, heroParticles: 800, sphereDetail: 48,
+    stars: 5500, dust: 800, nebulaPuffs: 40, heroParticles: 800, sphereDetail: 48,
   },
   low: {
     dpr: [0.75, 1], postprocessing: false, depthOfField: false, multisampling: 0,
-    stars: 2800, dust: 350, galaxyStars: 8000, nebulaPuffs: 22, heroParticles: 350, sphereDetail: 32,
+    stars: 2800, dust: 350, nebulaPuffs: 22, heroParticles: 350, sphereDetail: 32,
   },
 };
 

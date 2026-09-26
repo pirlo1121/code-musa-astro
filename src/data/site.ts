@@ -4,10 +4,10 @@
 export const SECTIONS = [
   { id: 'hero',       label: 'Inicio',      object: 'Estrella' },
   { id: 'about',      label: 'Sobre mí',    object: 'Nebulosa' },
-  { id: 'skills',     label: 'Habilidades', object: 'Sistema planetario' },
-  { id: 'projects',   label: 'Proyectos',   object: 'Galaxia' },
-  { id: 'experience', label: 'Trayectoria', object: 'Estación' },
-  { id: 'contact',    label: 'Contacto',    object: 'Portal' },
+  { id: 'skills',     label: 'Habilidades', object: 'Nebulosa esmeralda' },
+  { id: 'projects',   label: 'Proyectos',   object: 'Nebulosa carmesí' },
+  { id: 'experience', label: 'Trayectoria', object: 'Nebulosa zafiro' },
+  { id: 'contact',    label: 'Contacto',    object: 'Agujero negro' },
 ] as const;
 
 export type SectionId = (typeof SECTIONS)[number]['id'];

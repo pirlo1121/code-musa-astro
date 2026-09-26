@@ -20,8 +20,6 @@ export const frame = {
   u: 0,
   /** Section the camera is currently closest to (from the damped value). */
   section: 0,
-  activeSkill: -1,
-  activeProject: -1,
   /** Normalized pointer, −1…1. */
   pointerX: 0,
   pointerY: 0,

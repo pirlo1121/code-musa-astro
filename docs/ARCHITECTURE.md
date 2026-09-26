@@ -6,10 +6,12 @@ El portafolio es un recorrido *scrollytelling*: la página HTML se desplaza con 
 |---|---------|--------|--------|
 | 0 | Hero | Estrella masiva | `scenes/HeroStar.tsx` |
 | 1 | Sobre mí | Nebulosa | `scenes/NebulaScene.tsx` |
-| 2 | Habilidades | Sistema planetario | `scenes/SkillSystem.tsx` |
-| 3 | Proyectos | Galaxia espiral | `scenes/ProjectGalaxy.tsx` |
-| 4 | Trayectoria | Estación orbital | `scenes/SpaceStation.tsx` |
-| 5 | Contacto | Agujero de gusano | `scenes/Wormhole.tsx` |
+| 2 | Habilidades | Nebulosa esmeralda | `scenes/NebulaScene.tsx` |
+| 3 | Proyectos | Nebulosa carmesí | `scenes/NebulaScene.tsx` |
+| 4 | Trayectoria | Nebulosa zafiro | `scenes/NebulaScene.tsx` |
+| 5 | Contacto | Agujero negro | `scenes/BlackHole.tsx` |
+
+Las cuatro nebulosas comparten composición y aproximación de cámara (`nebulaStation` en `scenes/layout.ts`); solo cambian la paleta (`NEBULAE`) y las semillas.
 
 ## 1. Punto de partida
 
@@ -39,14 +41,12 @@ src/
 │   └── textures.ts          texturas procedurales (canvas), hash deterministas
 ├── components/
 │   ├── canvas/              piezas R3F reutilizables
-│   │   ├── CameraRig.tsx        damping, foco en planetas, parallax, encuadre
+│   │   ├── CameraRig.tsx        damping, parallax, encuadre
 │   │   ├── Starfield.tsx        estrellas + Vía Láctea + galaxias lejanas
 │   │   ├── SpaceDust.tsx        polvo infinito + estelas de velocidad
 │   │   ├── NebulaCloud.tsx      nubes volumétricas instanciadas + partículas
 │   │   ├── StarCore.tsx         estrella (plasma, corona, partículas)
-│   │   ├── Planet.tsx           planeta procedural + atmósfera + anillos
 │   │   ├── LensFlare.tsx        lens flare anamórfico procedural
-│   │   ├── Hologram.tsx         proyección holográfica de capturas
 │   │   ├── Effects.tsx          postprocesado + lente gravitacional
 │   │   └── PerformanceMonitor.tsx
 │   ├── sections/            HTML de cada estación (Astro)
@@ -55,7 +55,7 @@ src/
 │   └── Footer.astro
 ├── data/                    contenido estático editable
 │   ├── site.ts              secciones, frase, email, intereses
-│   ├── skills.ts            habilidades → planetas
+│   ├── skills.ts            habilidades (rejilla con medidores)
 │   └── experience.ts        trayectoria (⚠ placeholders)
 ├── hooks/                   useQuality, useStationVisibility, useBillboard
 ├── lib/
@@ -64,7 +64,7 @@ src/
 │   ├── quality.ts           detección de GPU y presupuestos por nivel
 │   └── data.ts              fetch de la API en build
 ├── scenes/                  una escena por estación + layout del universo
-└── shaders/                 GLSL (noise, star, planet, particles, wormhole…)
+└── shaders/                 GLSL (noise, star, particles, flare, blackhole…)
 ```
 
 ## 4. Del scroll a la cámara
@@ -86,11 +86,10 @@ Entre `a` y `b` la cámara está **estacionada** en el objeto (segmento par de `
 
 1. **Lenis** da inercia a la rueda del ratón.
 2. **CameraRig** amortigua `u` con `MathUtils.damp` (independiente del framerate).
-3. El foco en planetas tiene su propio damping, así que pasar de un planeta a otro traza un arco.
 
-### 4.4 Foco en planetas
+### 4.4 Habilidades y proyectos
 
-Habilidades y proyectos son *steps*: un `<li>` de 100svh por elemento. ScrollTrigger marca activo el step que cruza el centro del viewport (rangos contiguos, sin huecos). La cámara se coloca **al lado del planeta a lo largo de su órbita**, no entre el sol y el planeta, así que el planeta siempre se ve en media fase con el terminador visible, y la cámara nunca atraviesa la estrella central.
+Se muestran completos a la vez dentro de su nebulosa: una rejilla por sección, sin pasos de scroll por elemento. Los medidores de habilidad se llenan juntos cuando la rejilla entra en pantalla (`[data-inview]` → `is-inview`). Cada proyecto es un botón que abre un `<dialog>` modal con el detalle; mientras está abierto, Lenis se detiene (`space:lock` / `space:unlock`).
 
 ### 4.5 Encuadre
 
@@ -101,14 +100,14 @@ Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pant
 | Técnica | Dónde |
 |---------|-------|
 | Cero estado React por frame: todo se muta en `useFrame` desde `frame` y `sceneRefs` | `lib/store.ts` |
-| Animación 100 % en GPU (uniform `uTime`); 30k estrellas de galaxia sin coste JS | `shaders/particles.ts` |
-| Instancing: nebulosas en 1 draw call; naves con `InstancedMesh` | `NebulaCloud`, `SpaceStation` |
+| Animación 100 % en GPU (uniform `uTime`) | `shaders/particles.ts` |
+| Instancing: cada nube de nebulosa en 1 draw call | `NebulaCloud` |
 | Polvo infinito con un único buffer que envuelve la cámara (`mod`) | `SpaceDust` |
 | Estaciones lejanas ocultas (`visible = false`), lo que evita draw calls y fill-rate | `useStationVisibility` |
 | Shaders precompilados con `compileAsync` al montar, sin tirones al llegar | `useStationVisibility` |
 | Code splitting: hero en el primer chunk, el resto en `requestIdleCallback`, postprocesado aparte | `SpaceExperience.tsx` |
 | Texturas procedurales: 0 descargas de imágenes para el universo | `assets/textures.ts` |
-| Capturas de proyectos a WebP 960×540 en build; en 3D solo se descargan al enfocar el proyecto | `pages/index.astro`, `Hologram.tsx` |
+| Capturas de proyectos a WebP 960×540 en build | `pages/index.astro` |
 | DPR limitado por nivel; tone mapping una sola vez en el composer | `lib/quality.ts`, `Effects.tsx` |
 | Canvas a `100lvh`: la barra de URL móvil no redimensiona el canvas | `SpaceBackdrop.astro` |
 | `backdrop-filter` solo en nivel alto (re-muestrea el canvas cada frame) | `global.css` |
@@ -121,25 +120,25 @@ Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pant
 |--|--|--|--|--|
 | DPR máx. | 1.75 | 1.35 | 1 | – |
 | Postprocesado | Bloom, DOF, CA, grano, viñeta, lente | igual, sin DOF | no (antialias nativo) | – |
-| Estrellas / galaxia | 9k / 32k | 5.5k / 18k | 2.8k / 8k | fondo CSS |
+| Estrellas | 9k | 5.5k | 2.8k | fondo CSS |
 
 `PerformanceMonitor` mide FPS en ventanas de 2 s. Tras dos ventanas seguidas por debajo de 45 FPS baja un nivel en modo *auto* y avisa con un toast accesible. Nunca vuelve a subir, así que no puede oscilar. El usuario puede fijar el nivel en el selector del header (se guarda en `localStorage`).
 
 ## 6. Accesibilidad
 
 - **`prefers-reduced-motion`**: arranca en modo sin 3D, sin Lenis y sin animaciones de entrada. Un script inline en `<head>` aplica el layout compacto antes del primer pintado, sin reflow. El usuario puede activar el 3D a mano.
-- **Modo sin 3D**: la misma página con secciones compactas y las habilidades/proyectos en rejilla.
+- **Modo sin 3D**: la misma página con secciones compactas.
 - **Navegación**: skip link, `<nav>` con `aria-current`, anclas que vuelan la cámara y luego **mueven el foco** al título de la sección, `:focus-visible` en todo.
-- **Pasos**: todas las tarjetas existen en el DOM. Las inactivas se atenúan, pero `:focus-within` las muestra al 100 %, y el tabulador desplaza la página, lo que a su vez mueve la cámara.
+- **Proyectos**: cada tarjeta es un `<button>` que abre un `<dialog>` modal; Esc, el botón de cerrar o un clic fuera lo cierran y el foco vuelve a la tarjeta.
 - **Formulario**: etiquetas reales, `aria-invalid`, estado en `role="status"`.
 - Medidores de habilidad con `role="meter"` y valores ARIA.
 
 ## 7. Efectos visuales
 
-- **Bloom** (mipmap blur) sobre valores HDR (>1) que emiten los shaders de estrellas, anillos y portal.
+- **Bloom** (mipmap blur) sobre valores HDR (>1) que emiten los shaders de estrellas, disco de acreción y anillo de fotones.
 - **Depth of Field** con autofocus en el objeto mirado (`sceneRefs.focusPoint`); solo en nivel alto.
 - **Niebla volumétrica**: sprites instanciados de fBm que se disuelven al entrar la cámara, más tres bancos de bruma entre estaciones.
-- **Lens flare** anamórfico procedural y **lente gravitacional** del agujero de gusano como efecto `mainUv` fusionado en el mismo pase (sin pase extra).
+- **Lens flare** anamórfico procedural y **lente gravitacional** del agujero negro como efecto `mainUv` fusionado en el mismo pase (sin pase extra).
 - **Estelas de velocidad**: el mismo polvo dibujado como líneas estiradas según la velocidad real de la cámara.
 
 ## 8. Contenido pendiente
@@ -151,7 +150,7 @@ Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pant
 ## 9. Mejoras propuestas
 
 1. **KTX2/Basis** para cualquier textura futura (compresión en GPU; `KTX2Loader` con transcoder en worker).
-2. **Planetas por impostor**: renderizar cada planeta una vez a una textura y dibujarlo como sprite cuando esté lejos. Divide por ~3 el coste del sistema de habilidades.
+2. **Nebulosas por impostor**: renderizar cada nebulosa lejana una vez a una textura y dibujarla como sprite hasta que la cámara se acerque.
 3. **Audio espacial opcional** (Web Audio, apagado por defecto): drones ambientales por estación.
 4. **God rays** de la estrella del hero con `GodRaysEffect` en nivel alto.
 5. **Transición de "salto"** al pulsar un enlace del menú lejano: FOV que se abre y estelas más largas durante `lenis.scrollTo`.

@@ -1,19 +1,12 @@
 ---
 import SpaceExperience from '../../scenes/SpaceExperience';
-import type { ProjectBody } from '../../scenes/types';
-
-interface Props {
-  projects: ProjectBody[];
-}
-
-const { projects } = Astro.props;
 ---
 
 <!-- Fixed layer behind the content. The CSS backdrop is the poster frame
      (shown before WebGL is ready) and the permanent fallback when 3D is off. -->
 <div class="space-backdrop" aria-hidden="true">
   <div class="space-fallback"></div>
-  <SpaceExperience client:only="react" projects={projects} />
+  <SpaceExperience client:only="react" />
 </div>
 
 <style is:global>
