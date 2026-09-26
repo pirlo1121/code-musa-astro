@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SpaceBackdrop from '../components/ui/SpaceBackdrop.astro';
+import Autopilot from '../components/ui/Autopilot.astro';
 import Hero from '../components/sections/Hero.astro';
 import About from '../components/sections/About.astro';
 import Skills from '../components/sections/Skills.astro';
@@ -41,12 +42,14 @@ const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => 
   </main>
 
   <Footer profile={profile} />
+  <Autopilot />
 </BaseLayout>
 
 <script>
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { initScrollDirector } from '../animations/scroll-director';
+  import { initAutopilot } from '../animations/autopilot';
   import { getQuality, setQualityPref, subscribeQuality, effectiveTier, type QualityPref } from '../lib/store';
   import { SECTIONS } from '../data/site';
 
@@ -59,7 +62,7 @@ const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => 
   const progress = document.getElementById('journey-progress');
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  initScrollDirector({
+  const director = initScrollDirector({
     reducedMotion,
     onSection(i) {
       navLinks.forEach((a) => {
@@ -117,5 +120,12 @@ const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => 
     showToast(tier === 'off'
       ? 'Tu dispositivo no mantiene la fluidez: activamos el modo sin 3D. Puedes cambiarlo arriba.'
       : 'Ajustamos la calidad visual automáticamente para mantener la fluidez.');
+  });
+
+  // --- Autopilot ------------------------------------------------------------
+  initAutopilot({
+    ...director,
+    reducedMotion,
+    onComplete: () => showToast('Fin del viaje. ¿Construimos algo juntos? Escríbeme aquí abajo.'),
   });
 </script>

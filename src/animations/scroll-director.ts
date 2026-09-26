@@ -20,7 +20,7 @@ import { SECTIONS } from '../data/site';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface Key { a: number; b: number }
+export interface Key { a: number; b: number }
 
 export interface DirectorOptions {
   reducedMotion: boolean;
@@ -176,5 +176,5 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
 
   measure();
   update(window.scrollY);
-  return { lenis };
+  return { lenis, getKeys: () => keys };
 }

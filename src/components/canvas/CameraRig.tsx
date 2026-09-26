@@ -6,12 +6,14 @@ import { sceneRefs } from '../../lib/scene-refs';
 import { sampleCameraPath } from '../../animations/camera-path';
 
 const WORLD_UP = new Vector3(0, 1, 0);
+const BASE_FOV = 55;
 
 /**
  * Drives the camera from the scroll state:
  *  1. Damps the scroll parameter (inertia on top of Lenis) and samples the path.
  *  2. Adds idle drift and pointer parallax so the shot is never frozen.
  *  3. Re-aims so the object sits where the layout leaves room for the copy.
+ *  4. Flies like a ship: banks into turns and widens the lens at speed.
  */
 export function CameraRig() {
   const camera = useThree((s) => s.camera) as PerspectiveCamera;
@@ -20,7 +22,7 @@ export function CameraRig() {
   const v = useRef({
     pos: new Vector3(), look: new Vector3(), prev: new Vector3(),
     right: new Vector3(), up: new Vector3(), dir: new Vector3(),
-    px: 0, py: 0, initialized: false,
+    px: 0, py: 0, roll: 0, fov: BASE_FOV, initialized: false,
   }).current;
 
   useFrame((state, rawDt) => {
@@ -61,6 +63,18 @@ export function CameraRig() {
 
     camera.position.copy(v.pos);
     camera.lookAt(v.look);
+
+    // 4 · Ship feel ------------------------------------------------------------
+    // Bank against sideways motion, like a craft leaning into a turn.
+    const lateral = sceneRefs.velocity.dot(v.right);
+    v.roll = MathUtils.damp(v.roll, MathUtils.clamp(-lateral * 0.0022, -0.1, 0.1), 1.6, dt);
+    camera.rotateZ(v.roll);
+    // Open the lens slightly at cruise speed for a sense of acceleration.
+    v.fov = MathUtils.damp(v.fov, BASE_FOV + Math.min(frame.speed * 0.06, 7), 1.8, dt);
+    if (Math.abs(camera.fov - v.fov) > 0.01) {
+      camera.fov = v.fov;
+      camera.updateProjectionMatrix();
+    }
     camera.updateMatrixWorld();
 
     if (v.initialized && dt > 0) {

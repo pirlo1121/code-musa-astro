@@ -3,7 +3,7 @@
 
 export const SECTIONS = [
   { id: 'hero',       label: 'Inicio',      object: 'Estrella' },
-  { id: 'about',      label: 'Sobre mí',    object: 'Nebulosa' },
+  { id: 'about',      label: 'Sobre mí',    object: 'Nebulosa violeta' },
   { id: 'skills',     label: 'Habilidades', object: 'Nebulosa esmeralda' },
   { id: 'projects',   label: 'Proyectos',   object: 'Nebulosa carmesí' },
   { id: 'experience', label: 'Trayectoria', object: 'Nebulosa zafiro' },

@@ -91,7 +91,13 @@ Entre `a` y `b` la cámara está **estacionada** en el objeto (segmento par de `
 
 Se muestran completos a la vez dentro de su nebulosa: una rejilla por sección, sin pasos de scroll por elemento. Los medidores de habilidad se llenan juntos cuando la rejilla entra en pantalla (`[data-inview]` → `is-inview`). Cada proyecto es un botón que abre un `<dialog>` modal con el detalle; mientras está abierto, Lenis se detiene (`space:lock` / `space:unlock`).
 
-### 4.5 Encuadre
+### 4.5 Piloto automático
+
+El botón **Iniciar viaje** del hero (`animations/autopilot.ts`) recorre la página sola. No mueve la cámara directamente: anima el scroll con un timeline de GSAP, así que cámara, revelados, navegación, HUD y barra de progreso responden igual que con scroll manual. Cada estación tiene tres tiempos: despegue o vuelo (~4,6 s), exploración a ritmo de lectura (105 px/s, entre 6 y 16 s) y salida. Durante el viaje aparecen barras de cine, un indicador de destino y el botón *Tomar el control* (`components/ui/Autopilot.astro`). Cualquier rueda, toque, tecla o clic devuelve el control. Si se inicia a mitad de página, continúa desde ahí; si se inicia al final, vuelve a empezar.
+
+En vuelo, `CameraRig` inclina la cámara según la velocidad lateral (alabeo, como una nave en una curva) y abre el FOV hasta 7° con la velocidad.
+
+### 4.6 Encuadre
 
 Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pantalla. El rig desplaza el punto de mira en unidades del frustum (`distancia × tan(fov/2) × aspecto`). Así el objeto deja sitio al texto en cualquier resolución: lateral en escritorio, mitad superior en móvil vertical.
 

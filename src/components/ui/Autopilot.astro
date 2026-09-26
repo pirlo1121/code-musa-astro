@@ -1,0 +1,132 @@
+<!-- Cinematic frame shown while the autopilot flies the journey: letterbox
+     bars, a destination readout and the control to take the helm back. -->
+<div class="autopilot-frame" aria-hidden="true">
+  <div class="autopilot-frame__bar autopilot-frame__bar--top"></div>
+  <div class="autopilot-frame__bar autopilot-frame__bar--bottom"></div>
+</div>
+
+<div class="autopilot-panel">
+  <p class="autopilot-panel__readout" role="status" aria-live="polite">
+    <span class="autopilot-panel__pulse" aria-hidden="true"></span>
+    <span class="autopilot-panel__mode">Piloto automático</span>
+    <span class="autopilot-panel__sep" aria-hidden="true">·</span>
+    <span id="autopilot-phase">Despegando</span>
+    <strong id="autopilot-destination"></strong>
+  </p>
+  <button type="button" class="autopilot-panel__stop" id="autopilot-stop">
+    <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+    Tomar el control
+  </button>
+</div>
+
+<style is:global>
+  .autopilot-frame {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    pointer-events: none;
+  }
+
+  .autopilot-frame__bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: clamp(34px, 8vh, 76px);
+    background: #000;
+    transform: scaleY(0);
+    transition: transform 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .autopilot-frame__bar--top { top: 0; transform-origin: top; }
+  .autopilot-frame__bar--bottom { bottom: 0; transform-origin: bottom; }
+
+  html.autopilot .autopilot-frame__bar { transform: scaleY(1); }
+
+  /* The chrome steps aside: the frame is the interface now. */
+  .site-header,
+  .hud { transition: opacity 0.8s ease, transform 0.8s var(--ease-out); }
+  html.autopilot .site-header { opacity: 0; transform: translateY(-30%); pointer-events: none; }
+  html.autopilot .hud { opacity: 0; }
+
+  .autopilot-panel {
+    position: fixed;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 0;
+    z-index: 56;
+    height: clamp(34px, 8vh, 76px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.8s var(--ease-out), visibility 0s linear 0.8s;
+  }
+
+  html.autopilot .autopilot-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0.7s, 0.7s, 0s;
+  }
+
+  .autopilot-panel__readout {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+
+  .autopilot-panel__readout strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .autopilot-panel__pulse {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--warm);
+    box-shadow: 0 0 12px var(--warm);
+    animation: autopilot-pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes autopilot-pulse {
+    50% { opacity: 0.3; }
+  }
+
+  .autopilot-panel__stop {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .autopilot-panel__stop:hover { color: var(--ink); border-color: rgba(170, 195, 255, 0.4); }
+
+  @media (max-width: 600px) {
+    .autopilot-panel__mode,
+    .autopilot-panel__sep { display: none; }
+  }
+</style>
