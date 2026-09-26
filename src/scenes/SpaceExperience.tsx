@@ -13,7 +13,7 @@ import HeroStar from './HeroStar';
 // The hero ships in the first chunk; every other station is code-split and
 // fetched while the visitor is still reading the hero.
 const NebulaScene = lazy(() => import('./NebulaScene'));
-const BlackHole = lazy(() => import('./BlackHole'));
+const Moon = lazy(() => import('./Moon'));
 // Post-processing is the single heaviest dependency; tiers without it never download it.
 const Effects = lazy(() => import('../components/canvas/Effects'));
 
@@ -78,7 +78,7 @@ export default function SpaceExperience() {
       {mountRest && (
         <Suspense fallback={null}>
           {NEBULA_STATIONS.map((i) => <NebulaScene key={i} index={i} />)}
-          <BlackHole />
+          <Moon />
         </Suspense>
       )}
       {cfg.postprocessing && (

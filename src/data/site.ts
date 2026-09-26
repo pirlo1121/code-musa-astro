@@ -7,7 +7,7 @@ export const SECTIONS = [
   { id: 'skills',     label: 'Habilidades', object: 'Nebulosa esmeralda' },
   { id: 'projects',   label: 'Proyectos',   object: 'Nebulosa carmesí' },
   { id: 'experience', label: 'Trayectoria', object: 'Nebulosa zafiro' },
-  { id: 'contact',    label: 'Contacto',    object: 'Agujero negro' },
+  { id: 'contact',    label: 'Contacto',    object: 'Luna' },
 ] as const;
 
 export type SectionId = (typeof SECTIONS)[number]['id'];

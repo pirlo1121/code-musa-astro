@@ -40,13 +40,13 @@ export const STATIONS: Station[] = [
   nebulaStation(v(-40, 4, -670), 1, -0.3),
   // 4 · Experience — sapphire nebula, copy on the left
   nebulaStation(v(50, 0, -860), -1, 0.42),
-  // 5 · Contact — black hole, copy on the left
-  { center: v(0, 0, -1060), camArrive: v(6, 3, -992), camDepart: v(2, 1, -1012), frameX: 0.4, frameY: 0.4 },
+  // 5 · Contact — the Moon, copy on the left
+  { center: v(0, 0, -1060), camArrive: v(8, 4, -982), camDepart: v(4, 2, -1004), frameX: 0.4, frameY: 0.4 },
 ];
 
 export const HERO = { radius: 16 };
 export const NEBULA = { origin: v(0, 0, 0), radius: v(75, 34, 60) };
-export const BLACK_HOLE = { radius: 7 };
+export const MOON = { radius: 15 };
 
 export interface NebulaLook {
   outer: string[];

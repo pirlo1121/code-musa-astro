@@ -9,7 +9,7 @@ El portafolio es un recorrido *scrollytelling*: la página HTML se desplaza con 
 | 2 | Habilidades | Nebulosa esmeralda | `scenes/NebulaScene.tsx` |
 | 3 | Proyectos | Nebulosa carmesí | `scenes/NebulaScene.tsx` |
 | 4 | Trayectoria | Nebulosa zafiro | `scenes/NebulaScene.tsx` |
-| 5 | Contacto | Agujero negro | `scenes/BlackHole.tsx` |
+| 5 | Contacto | Luna | `scenes/Moon.tsx` |
 
 Las cuatro nebulosas comparten composición y aproximación de cámara (`nebulaStation` en `scenes/layout.ts`); solo cambian la paleta (`NEBULAE`) y las semillas.
 
@@ -64,7 +64,7 @@ src/
 │   ├── quality.ts           detección de GPU y presupuestos por nivel
 │   └── data.ts              fetch de la API en build
 ├── scenes/                  una escena por estación + layout del universo
-└── shaders/                 GLSL (noise, star, particles, flare, blackhole…)
+└── shaders/                 GLSL (noise, star, particles, flare, moon…)
 ```
 
 ## 4. Del scroll a la cámara
@@ -135,10 +135,11 @@ Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pant
 
 ## 7. Efectos visuales
 
-- **Bloom** (mipmap blur) sobre valores HDR (>1) que emiten los shaders de estrellas, disco de acreción y anillo de fotones.
+- **Bloom** (mipmap blur) sobre valores HDR (>1) que emiten los shaders de estrellas, luces de navegación de los satélites.
 - **Depth of Field** con autofocus en el objeto mirado (`sceneRefs.focusPoint`); solo en nivel alto.
 - **Niebla volumétrica**: sprites instanciados de fBm que se disuelven al entrar la cámara, más tres bancos de bruma entre estaciones.
-- **Lens flare** anamórfico procedural y **lente gravitacional** del agujero negro como efecto `mainUv` fusionado en el mismo pase (sin pase extra).
+- **Lens flare** anamórfico procedural.
+- **Luna procedural**: cráteres en varias escalas (rejilla 3D con jitter), mares, sistemas de rayos, relieve por *bump* con derivadas de pantalla, iluminación Lommel–Seeliger + Lambert, luz cenicienta y luces de bases en el lado nocturno. La rodean un halo, satélites en órbitas inclinadas con estelas y luces de navegación, y un anillo de polvo. El número de octavas de cráteres baja con el nivel de calidad.
 - **Estelas de velocidad**: el mismo polvo dibujado como líneas estiradas según la velocidad real de la cámara.
 
 ## 8. Contenido pendiente
