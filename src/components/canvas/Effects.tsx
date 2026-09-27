@@ -7,6 +7,8 @@ import { BlendFunction, DepthOfFieldEffect, ToneMappingMode } from 'postprocessi
 import { Vector2 } from 'three';
 import { sceneRefs } from '../../lib/scene-refs';
 
+const ABERRATION = new Vector2(0.0005, 0.0007);
+
 export default function Effects({ depthOfField }: { depthOfField: boolean }) {
   const dof = useRef<DepthOfFieldEffect>(null);
 
@@ -21,7 +23,7 @@ export default function Effects({ depthOfField }: { depthOfField: boolean }) {
         <DepthOfField ref={dof} target={[0, 0, 0]} worldFocusRange={90} bokehScale={2.6} resolutionScale={0.5} />
       ) : <></>}
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-      <ChromaticAberration offset={new Vector2(0.0005, 0.0007)} radialModulation modulationOffset={0.35} />
+      <ChromaticAberration offset={ABERRATION} radialModulation modulationOffset={0.35} />
       <Vignette offset={0.26} darkness={0.72} />
       <Noise opacity={0.04} premultiply blendFunction={BlendFunction.SCREEN} />
     </EffectComposer>

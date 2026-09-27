@@ -227,9 +227,9 @@ import { SECTIONS } from '../data/site';
   }
   .toast.is-visible { opacity: 1; transform: none; }
 
-  @media (max-width: 900px) {
-    .site-header__bar { flex-wrap: wrap; gap: 0.6rem 1rem; padding-block: 0.7rem 0.5rem; }
-    .site-nav { order: 3; width: 100%; margin: 0; }
+  /* Narrow or short screens: the nav becomes a horizontal scroller. */
+  @media (max-width: 900px), (max-height: 560px) {
+    .site-nav { min-width: 0; }
     .site-nav ol {
       overflow-x: auto;
       scrollbar-width: none;
@@ -237,8 +237,22 @@ import { SECTIONS } from '../data/site';
     }
     .site-nav ol::-webkit-scrollbar { display: none; }
     .site-nav li { scroll-snap-align: start; }
-    .quality { margin-left: auto; }
     .hud { display: none; }
+  }
+
+  /* Portrait phones and tablets: nav on its own row under brand + quality. */
+  @media (max-width: 900px) and (min-height: 561px) {
+    .site-header__bar { flex-wrap: wrap; gap: 0.6rem 1rem; padding-block: 0.7rem 0.5rem; }
+    .site-nav { order: 3; width: 100%; margin: 0; }
+    .quality { margin-left: auto; }
+  }
+
+  /* Landscape phones: every pixel of height counts, keep one compact row. */
+  @media (max-height: 560px) {
+    .site-header__bar { gap: 0.75rem; padding-block: 0.5rem; }
+    .brand__name { display: none; }
+    .site-nav { flex: 1; margin: 0; }
+    .site-nav a { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
   }
 
   @media (max-height: 760px) {

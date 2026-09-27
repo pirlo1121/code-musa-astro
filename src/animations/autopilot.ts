@@ -30,10 +30,10 @@ interface AutopilotOptions {
   onComplete?: () => void;
 }
 
-const LAUNCH = 3.2;           // s: leaving the hero star
-const FLIGHT = 4.6;           // s: between two stations
-const READ_SPEED = 105;       // px/s while exploring a section
-const EXPLORE = [6, 16];      // s: clamp for the time spent at a station
+const LAUNCH = 2.6;           // s: leaving the hero star
+const FLIGHT = 3.6;           // s: between two stations
+const READ_SPEED = 120;       // px/s while exploring a section
+const EXPLORE = [5, 13];      // s: clamp for the time spent at a station
 
 function planLegs(keys: Key[], maxScroll: number): Leg[] {
   const legs: Leg[] = [{ to: keys[0].b, duration: LAUNCH, ease: 'power2.in', station: 0, kind: 'launch' }];

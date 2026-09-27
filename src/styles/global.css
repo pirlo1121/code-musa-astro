@@ -25,6 +25,17 @@
 
   --gutter: clamp(1rem, 4vw, 2.5rem);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Height of the fixed header, for layouts that must clear it. */
+  --header-h: 82px;
+}
+
+@media (max-width: 900px) and (min-height: 561px) {
+  :root { --header-h: 118px; }
+}
+
+@media (max-height: 560px) {
+  :root { --header-h: 58px; }
 }
 
 /* ==========================================================================
@@ -100,8 +111,8 @@ a { color: inherit; }
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 180svh;
-  padding-block: 30svh;
+  min-height: 150svh;
+  padding-block: 24svh;
   scroll-margin-top: 0;
 }
 
@@ -279,7 +290,7 @@ html[data-quality='high'] .glass {
 
 .station--grid {
   display: block;
-  padding-block: 30svh 25svh;
+  padding-block: 24svh 20svh;
 }
 
 .section-head { max-width: 36rem; margin-bottom: 2.5rem; }

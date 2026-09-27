@@ -73,10 +73,10 @@ src/
 
 `scroll-director.ts` mide cada sección y calcula dos claves en píxeles de scroll:
 
-- `a` es cuando la sección llega a la zona de lectura (su borde superior al 30 % del viewport);
-- `b` es cuando empieza a irse (su borde inferior al 70 %).
+- `a` es cuando la sección llega a la zona de lectura (su borde superior al 35 % del viewport);
+- `b` es cuando empieza a irse (su borde inferior al 65 %).
 
-Entre `a` y `b` la cámara está **estacionada** en el objeto (segmento par de `u`). Entre la `b` de una sección y la `a` de la siguiente **vuela** (segmento impar). El vuelo dura unos 0,4 viewports de scroll y coincide con el hueco entre dos secciones, así que el texto nunca se mueve mientras la cámara acelera.
+Entre `a` y `b` la cámara está **estacionada** en el objeto (segmento par de `u`). Entre la `b` de una sección y la `a` de la siguiente **vuela** (segmento impar). El vuelo dura unos 0,3 viewports de scroll y coincide con el hueco entre dos secciones. Mientras la cámara sale, el contenido de la sección se desvanece hacia arriba (scrub) y el de la siguiente aparece en 0,75 s.
 
 ### 4.2 Curvas
 
@@ -93,7 +93,7 @@ Aparecen completos a la vez dentro de su nebulosa, sin pasos de scroll por eleme
 
 ### 4.5 Piloto automático
 
-El botón **Iniciar viaje** del hero (`animations/autopilot.ts`) recorre la página sola. No mueve la cámara directamente: anima el scroll con un timeline de GSAP, así que cámara, revelados, navegación, HUD y barra de progreso responden igual que con scroll manual. Cada estación tiene tres tiempos: despegue o vuelo (~4,6 s), exploración a ritmo de lectura (105 px/s, entre 6 y 16 s) y salida. Durante el viaje aparecen barras de cine, un indicador de destino y el botón *Tomar el control* (`components/ui/Autopilot.astro`). Cualquier rueda, toque, tecla o clic devuelve el control. Si se inicia a mitad de página, continúa desde ahí; si se inicia al final, vuelve a empezar.
+El botón **Iniciar viaje** del hero (`animations/autopilot.ts`) recorre la página sola. No mueve la cámara directamente: anima el scroll con un timeline de GSAP, así que cámara, revelados, navegación, HUD y barra de progreso responden igual que con scroll manual. Cada estación tiene tres tiempos: despegue o vuelo (~3,6 s), exploración a ritmo de lectura (120 px/s, entre 5 y 13 s) y salida. Durante el viaje aparecen barras de cine, un indicador de destino y el botón *Tomar el control* (`components/ui/Autopilot.astro`). Cualquier rueda, toque, tecla o clic devuelve el control. Si se inicia a mitad de página, continúa desde ahí; si se inicia al final, vuelve a empezar.
 
 En vuelo, `CameraRig` inclina la cámara según la velocidad lateral (alabeo, como una nave en una curva) y abre el FOV hasta 7° con la velocidad.
 

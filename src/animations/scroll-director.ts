@@ -57,8 +57,8 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
       const top = el.getBoundingClientRect().top + window.scrollY;
       const bottom = top + el.offsetHeight;
       return {
-        a: i === 0 ? 0 : top - vh * 0.3,
-        b: i === last ? Math.max(top, document.documentElement.scrollHeight - vh) : bottom - vh * 0.7,
+        a: i === 0 ? 0 : top - vh * 0.35,
+        b: i === last ? Math.max(top, document.documentElement.scrollHeight - vh) : bottom - vh * 0.65,
       };
     });
   }
@@ -101,11 +101,25 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
       const items = group.querySelectorAll<HTMLElement>('[data-reveal-item]');
       gsap.from(items.length ? items : group, {
         autoAlpha: 0,
-        y: 48,
-        duration: 1.1,
+        y: 32,
+        duration: 0.75,
         ease: 'expo.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: group, start: 'top 82%', toggleActions: 'play none none reverse' },
+        stagger: 0.05,
+        scrollTrigger: { trigger: group, start: 'top 88%', toggleActions: 'play none none reverse' },
+      });
+    });
+
+    // Exit: each station's copy lifts away while the camera leaves, so the
+    // hand-over to the next object is quick and clean. The last one stays.
+    sections.slice(1, -1).forEach((section) => {
+      const inner = section.querySelector('.station__inner');
+      if (!inner) return;
+      gsap.fromTo(inner, { autoAlpha: 1, y: 0 }, {
+        autoAlpha: 0,
+        y: -40,
+        ease: 'power1.in',
+        immediateRender: false,
+        scrollTrigger: { trigger: section, start: 'bottom 62%', end: 'bottom 22%', scrub: 0.4 },
       });
     });
 
@@ -116,7 +130,7 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
         y: -90,
         scale: 0.96,
         ease: 'none',
-        scrollTrigger: { trigger: sections[0], start: 'top top', end: 'bottom 40%', scrub: true },
+        scrollTrigger: { trigger: sections[0], start: 'top top', end: 'bottom 50%', scrub: 0.4 },
       });
     }
   }

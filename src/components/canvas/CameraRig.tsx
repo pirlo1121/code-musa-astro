@@ -31,7 +31,7 @@ export function CameraRig() {
 
     // 1 · Path ---------------------------------------------------------------
     if (!v.initialized) frame.u = frame.targetU;
-    frame.u = MathUtils.damp(frame.u, frame.targetU, 2.8, dt);
+    frame.u = MathUtils.damp(frame.u, frame.targetU, 3.6, dt);
     frame.section = Math.min(SECTION_COUNT - 1, Math.floor((frame.u + 0.5) / 2));
     const framing = sampleCameraPath(frame.u, v.pos, v.look);
     sceneRefs.focusPoint.copy(v.look);

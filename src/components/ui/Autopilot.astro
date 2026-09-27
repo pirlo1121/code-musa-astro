@@ -125,8 +125,17 @@
 
   .autopilot-panel__stop:hover { color: var(--ink); border-color: rgba(170, 195, 255, 0.4); }
 
+  .autopilot-panel__readout { overflow: hidden; }
+  #autopilot-phase { flex: none; }
+
   @media (max-width: 600px) {
     .autopilot-panel__mode,
     .autopilot-panel__sep { display: none; }
+    .autopilot-panel__readout { font-size: 0.62rem; letter-spacing: 0.1em; gap: 0.45rem; }
+    .autopilot-panel__stop { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+  }
+
+  @media (max-width: 400px) {
+    #autopilot-phase { display: none; }
   }
 </style>
