@@ -22,9 +22,4 @@ export const site = {
   // TODO: public contact address. Left empty on purpose — the e-mail block is
   // hidden until you fill it in.
   email: '',
-
-  favoriteTech: ['TypeScript', 'JavaScript', 'Node.js', 'Angular', 'Astro', 'Docker', 'Python'],
-
-  // TODO: adjust to your real interests.
-  interests: ['Arquitectura backend', 'Rendimiento web', 'Linux y automatización', 'Experiencias 3D en la web'],
 };

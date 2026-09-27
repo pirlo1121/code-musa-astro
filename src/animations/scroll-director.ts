@@ -93,18 +93,6 @@ export function initScrollDirector({ reducedMotion, onSection, onProgress }: Dir
     onRefresh: (self) => { measure(); update(self.scroll()); },
   });
 
-  // --- In-view groups ----------------------------------------------------
-  // Skills and projects appear all at once when their nebula is on screen;
-  // `is-inview` lets CSS play one-off effects such as the skill meters.
-  document.querySelectorAll<HTMLElement>('[data-inview]').forEach((el) => {
-    ScrollTrigger.create({
-      trigger: el,
-      start: 'top 85%',
-      end: 'bottom 15%',
-      onToggle: (self) => el.classList.toggle('is-inview', self.isActive),
-    });
-  });
-
   // --- Content choreography ------------------------------------------------
   if (!reducedMotion) {
     // gsap.from() only hides elements once JS has run, so content is never

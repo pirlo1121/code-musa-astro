@@ -20,6 +20,8 @@ export const frame = {
   u: 0,
   /** Section the camera is currently closest to (from the damped value). */
   section: 0,
+  /** Station whose nebula is opened up (e.g. "Ver todos los proyectos"), or −1. */
+  expandedStation: -1,
   /** Normalized pointer, −1…1. */
   pointerX: 0,
   pointerY: 0,

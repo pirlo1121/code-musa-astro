@@ -22,7 +22,6 @@ const columns: { title: string; entries: ExperienceEntry[] }[] = [
             <ol class="timeline" role="list">
               {col.entries.map((e) => (
                 <li class="timeline__item">
-                  <span class="timeline__period">{e.period}</span>
                   <p class="timeline__title">{e.title}</p>
                   <p class="timeline__org">{e.org}</p>
                   {e.description && <p class="timeline__text">{e.description}</p>}
@@ -59,7 +58,7 @@ const columns: { title: string; entries: ExperienceEntry[] }[] = [
     content: '';
     position: absolute;
     left: calc(-1.1rem - 4px);
-    top: 0.35rem;
+    top: 0.55rem;
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -67,14 +66,7 @@ const columns: { title: string; entries: ExperienceEntry[] }[] = [
     box-shadow: 0 0 10px var(--accent);
   }
 
-  .timeline__period {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-  }
-
-  .timeline__title { margin-top: 0.25rem; font-weight: 600; color: var(--ink); }
+  .timeline__title { font-weight: 600; color: var(--ink); }
   .timeline__org { color: var(--ink-2); font-size: 0.92rem; }
   .timeline__text { color: var(--ink-3); font-size: 0.9rem; margin-top: 0.35rem; line-height: 1.6; }
 </style>

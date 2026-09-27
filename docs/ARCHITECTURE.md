@@ -55,7 +55,7 @@ src/
 │   └── Footer.astro
 ├── data/                    contenido estático editable
 │   ├── site.ts              secciones, frase, email, intereses
-│   ├── skills.ts            habilidades (rejilla con medidores)
+│   ├── skills.ts            habilidades (nombre y color)
 │   └── experience.ts        trayectoria (⚠ placeholders)
 ├── hooks/                   useQuality, useStationVisibility, useBillboard
 ├── lib/
@@ -89,7 +89,7 @@ Entre `a` y `b` la cámara está **estacionada** en el objeto (segmento par de `
 
 ### 4.4 Habilidades y proyectos
 
-Se muestran completos a la vez dentro de su nebulosa: una rejilla por sección, sin pasos de scroll por elemento. Los medidores de habilidad se llenan juntos cuando la rejilla entra en pantalla (`[data-inview]` → `is-inview`). Cada proyecto es un botón que abre un `<dialog>` modal con el detalle; mientras está abierto, Lenis se detiene (`space:lock` / `space:unlock`).
+Aparecen completos a la vez dentro de su nebulosa, sin pasos de scroll por elemento. Las habilidades son píldoras con nombre y color. De los proyectos se ven los 3 más recientes (ordenados por `_id`, que empieza con la fecha de creación), solo con su captura. **Ver todos** muestra el resto con animación, recalcula el scroll y pone `frame.expandedStation`, lo que hace crecer la nebulosa carmesí alrededor de la cámara. Cada proyecto abre un `<dialog>` modal con el detalle; mientras está abierto, Lenis se detiene (`space:lock` / `space:unlock`).
 
 ### 4.5 Piloto automático
 
@@ -135,9 +135,8 @@ Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pant
 - **`prefers-reduced-motion`**: arranca en modo sin 3D, sin Lenis y sin animaciones de entrada. Un script inline en `<head>` aplica el layout compacto antes del primer pintado, sin reflow. El usuario puede activar el 3D a mano.
 - **Modo sin 3D**: la misma página con secciones compactas.
 - **Navegación**: skip link, `<nav>` con `aria-current`, anclas que vuelan la cámara y luego **mueven el foco** al título de la sección, `:focus-visible` en todo.
-- **Proyectos**: cada tarjeta es un `<button>` que abre un `<dialog>` modal; Esc, el botón de cerrar o un clic fuera lo cierran y el foco vuelve a la tarjeta.
+- **Proyectos**: cada captura es un `<button>` con `aria-label` (nombre del proyecto) que abre un `<dialog>` modal; Esc, el botón de cerrar o un clic fuera lo cierran y el foco vuelve a la tarjeta.
 - **Formulario**: etiquetas reales, `aria-invalid`, estado en `role="status"`.
-- Medidores de habilidad con `role="meter"` y valores ARIA.
 
 ## 7. Efectos visuales
 

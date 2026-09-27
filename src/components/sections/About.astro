@@ -5,6 +5,7 @@ import { site } from '../../data/site';
 
 interface Props { profile: Profile | null }
 const { profile } = Astro.props;
+const role = profile?.profession ?? site.fallbackRole;
 ---
 
 <section id="about" class="station" aria-labelledby="about-title">
@@ -17,26 +18,14 @@ const { profile } = Astro.props;
         ) : (
           <img src="/assets/placeholder.svg" alt="" width="160" height="160" class="about__photo" loading="lazy" decoding="async" />
         )}
-        <h2 id="about-title" class="section-title" data-focus-target>Sobre mí</h2>
+        <div>
+          <h2 id="about-title" class="section-title" data-focus-target>Sobre mí</h2>
+          <p class="about__role">{role}</p>
+        </div>
       </div>
       <p class="about__bio" data-reveal-item>
         {profile?.bio ?? 'Desarrollador de software enfocado en construir productos web rápidos y mantenibles.'}
       </p>
-
-      <div class="about__grid">
-        <div data-reveal-item>
-          <h3 class="label">Tecnologías favoritas</h3>
-          <ul class="chips" role="list">
-            {site.favoriteTech.map((t) => <li class="chip">{t}</li>)}
-          </ul>
-        </div>
-        <div data-reveal-item>
-          <h3 class="label">Intereses</h3>
-          <ul class="interest-list" role="list">
-            {site.interests.map((t) => <li>{t}</li>)}
-          </ul>
-        </div>
-      </div>
 
       {(profile?.socialLinks?.github || profile?.socialLinks?.linkedin) && (
         <div class="about__links" data-reveal-item>
@@ -57,6 +46,7 @@ const { profile } = Astro.props;
   }
 
   .about__photo {
+    flex: none;
     width: 84px;
     height: 84px;
     border-radius: 50%;
@@ -65,39 +55,21 @@ const { profile } = Astro.props;
     box-shadow: 0 0 0 5px rgba(255, 90, 170, 0.08), 0 0 40px rgba(180, 100, 255, 0.35);
   }
 
+  .about__role {
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+  }
+
   .about__bio {
-    font-size: 1.08rem;
+    font-size: 1.15rem;
     line-height: 1.75;
     color: var(--ink-2);
-    margin-bottom: 2rem;
+    font-style: italic;
     overflow-wrap: anywhere;
-  }
-
-  .about__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    gap: 1.75rem;
-  }
-
-  .interest-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 0.5rem;
-    color: var(--ink-2);
-  }
-
-  .interest-list li::before {
-    content: '';
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    margin-right: 0.6rem;
-    border-radius: 50%;
-    background: var(--accent-2);
-    box-shadow: 0 0 10px var(--accent-2);
-    vertical-align: middle;
   }
 
   .about__links {
