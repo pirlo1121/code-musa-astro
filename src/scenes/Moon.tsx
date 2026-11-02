@@ -11,7 +11,7 @@ import { useBillboard } from '../hooks/useBillboard';
 import { useTierConfig } from '../hooks/useQuality';
 import { MOON, STATIONS } from './layout';
 
-const INDEX = 5;
+const INDEX = 4;
 /** Sunlight direction in world space: from the upper left, slightly behind
  *  the camera, so the Moon is a bright gibbous with a relief-lit terminator. */
 const SUN = new Vector3(-0.78, 0.32, 0.5).normalize();

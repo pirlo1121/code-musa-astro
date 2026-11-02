@@ -12,10 +12,10 @@ const linkedin = profile?.socialLinks?.linkedin;
 <section id="contact" class="station station--contact" aria-labelledby="contact-title">
   <div class="station__inner">
     <div class="panel panel--left glass" data-reveal>
-      <p class="kicker" data-reveal-item>06 — Luna</p>
-      <h2 id="contact-title" class="section-title" data-reveal-item data-focus-target>Llevemos tu idea a la Luna</h2>
+      <p class="kicker" data-reveal-item>05 — Moon</p>
+      <h2 id="contact-title" class="section-title" data-reveal-item data-focus-target>Let's take your idea to the Moon</h2>
       <p class="section-lede" data-reveal-item>
-        ¿Tienes un proyecto, una idea o una oportunidad? Escríbeme y te respondo pronto.
+        Have a project, an idea or an opportunity? Write to me and I'll get back to you soon.
       </p>
 
       {(site.email || github || linkedin) && (
@@ -28,19 +28,19 @@ const linkedin = profile?.socialLinks?.linkedin;
 
       <form id="contact-form" class="contact-form" data-api={API_BASE_URL} data-reveal-item novalidate>
         <div class="field">
-          <label for="contact-name">Nombre</label>
+          <label for="contact-name">Name</label>
           <input id="contact-name" name="name" type="text" autocomplete="name" required />
         </div>
         <div class="field">
-          <label for="contact-email">Correo</label>
+          <label for="contact-email">Email</label>
           <input id="contact-email" name="email" type="email" autocomplete="email" required />
         </div>
         <div class="field">
-          <label for="contact-message">Mensaje</label>
+          <label for="contact-message">Message</label>
           <textarea id="contact-message" name="message" rows="4" required></textarea>
         </div>
         <button class="btn btn--primary btn--block" type="submit" id="contact-submit">
-          <span class="btn__label">Enviar mensaje</span>
+          <span class="btn__label">Send message</span>
         </button>
         <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
       </form>
@@ -126,14 +126,14 @@ const linkedin = profile?.socialLinks?.linkedin;
       if (!valid && !firstInvalid) firstInvalid = f;
     }
     if (firstInvalid) {
-      setStatus('Revisa los campos marcados: todos son obligatorios y el correo debe ser válido.', 'error');
+      setStatus('Check the highlighted fields: all of them are required and the email must be valid.', 'error');
       firstInvalid.focus();
       return;
     }
 
     const [name, email, message] = fields.map((f) => f.value.trim());
     submit.disabled = true;
-    if (label) label.textContent = 'Enviando…';
+    if (label) label.textContent = 'Sending…';
     setStatus('');
 
     try {
@@ -144,18 +144,18 @@ const linkedin = profile?.socialLinks?.linkedin;
       });
       const data = await res.json();
       if (data.ok) {
-        setStatus(data.msg || '¡Mensaje enviado! Te responderé pronto.', 'ok');
+        setStatus('Message sent! I\'ll get back to you soon.', 'ok');
         form.reset();
         fields.forEach((f) => f.removeAttribute('aria-invalid'));
       } else {
-        setStatus(data.msg || 'No se pudo enviar el mensaje.', 'error');
+        setStatus('The message could not be sent.', 'error');
       }
     } catch (err) {
       console.error(err);
-      setStatus('Ocurrió un error de conexión. Inténtalo de nuevo.', 'error');
+      setStatus('A connection error occurred. Please try again.', 'error');
     } finally {
       submit.disabled = false;
-      if (label) label.textContent = 'Enviar mensaje';
+      if (label) label.textContent = 'Send message';
     }
   });
 </script>

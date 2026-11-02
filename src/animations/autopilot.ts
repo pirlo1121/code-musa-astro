@@ -1,4 +1,4 @@
-// Autopilot: "Iniciar viaje" flies the whole journey on its own.
+// Autopilot: "Start journey" flies the whole journey on its own.
 //
 // It does not move the camera directly: it drives the page scroll, so the
 // camera, the section reveals, the nav, the HUD and the progress bar all
@@ -66,7 +66,7 @@ export function initAutopilot({ lenis, getKeys, reducedMotion, onComplete }: Aut
   function announce(leg: Leg) {
     if (destination) destination.textContent = SECTIONS[leg.station].object;
     if (phase) {
-      phase.textContent = leg.kind === 'launch' ? 'Despegando' : leg.kind === 'flight' ? 'Rumbo a' : 'Explorando';
+      phase.textContent = leg.kind === 'launch' ? 'Taking off' : leg.kind === 'flight' ? 'Heading to' : 'Exploring';
     }
   }
 

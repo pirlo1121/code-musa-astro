@@ -38,10 +38,8 @@ export const STATIONS: Station[] = [
   nebulaStation(v(60, -6, -480), -1, 0.3),
   // 3 · Projects — crimson nebula
   nebulaStation(v(-40, 4, -670), 1, -0.3),
-  // 4 · Experience — sapphire nebula, copy on the left
-  nebulaStation(v(50, 0, -860), -1, 0.42),
-  // 5 · Contact — the Moon, copy on the left
-  { center: v(0, 0, -1060), camArrive: v(8, 4, -982), camDepart: v(4, 2, -1004), frameX: 0.4, frameY: 0.4 },
+  // 4 · Contact — the Moon, copy on the left
+  { center: v(0, 0, -870), camArrive: v(8, 4, -792), camDepart: v(4, 2, -814), frameX: 0.4, frameY: 0.4 },
 ];
 
 export const HERO = { radius: 16 };
@@ -83,13 +81,5 @@ export const NEBULAE: Record<number, NebulaLook> = {
     motes: ['#ffe0c8', '#ffc2c2', '#fff0c2'],
     starCool: '#ff9a5f', starHot: '#fff0d6',
     stars: [v(-16, 4, 12), v(20, -6, -8), v(-8, -10, -26)],
-  },
-  // Sapphire: reflection-nebula blues with a violet core.
-  4: {
-    outer: ['#1f3fc4', '#4a24b8', '#1a70b0', '#2a1878'],
-    inner: ['#8fb8ff', '#c49dff', '#dff0ff', '#6be0ff'],
-    motes: ['#dfe8ff', '#e6d8ff', '#c8f4ff'],
-    starCool: '#7fa8ff', starHot: '#eef4ff',
-    stars: [v(10, 10, 6), v(-22, -4, -12), v(18, -8, -26)],
   },
 };

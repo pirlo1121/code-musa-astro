@@ -9,7 +9,6 @@ import Hero from '../components/sections/Hero.astro';
 import About from '../components/sections/About.astro';
 import Skills from '../components/sections/Skills.astro';
 import Projects from '../components/sections/Projects.astro';
-import Experience from '../components/sections/Experience.astro';
 import Contact from '../components/sections/Contact.astro';
 import { getProfile, getProjects, type ProjectView } from '../lib/data';
 
@@ -37,7 +36,6 @@ const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => 
     <About profile={profile} />
     <Skills />
     <Projects projects={projectViews} />
-    <Experience />
     <Contact profile={profile} />
   </main>
 
@@ -118,14 +116,14 @@ const projectViews: ProjectView[] = await Promise.all(projects.map(async (p) => 
   window.addEventListener('space:downgrade', () => {
     const tier = effectiveTier();
     showToast(tier === 'off'
-      ? 'Tu dispositivo no mantiene la fluidez: activamos el modo sin 3D. Puedes cambiarlo arriba.'
-      : 'Ajustamos la calidad visual automáticamente para mantener la fluidez.');
+      ? 'Your device was struggling to keep up, so we switched to the no-3D mode. You can change it above.'
+      : 'We lowered the visual quality automatically to keep things smooth.');
   });
 
   // --- Autopilot ------------------------------------------------------------
   initAutopilot({
     ...director,
     reducedMotion,
-    onComplete: () => showToast('Fin del viaje. ¿Construimos algo juntos? Escríbeme aquí abajo.'),
+    onComplete: () => showToast('End of the journey. Shall we build something together? Write to me below.'),
   });
 </script>

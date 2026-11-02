@@ -11,20 +11,20 @@ const role = profile?.profession ?? site.fallbackRole;
 <section id="about" class="station" aria-labelledby="about-title">
   <div class="station__inner">
     <div class="panel panel--right glass" data-reveal>
-      <p class="kicker" data-reveal-item>02 — Nebulosa violeta</p>
+      <p class="kicker" data-reveal-item>02 — Violet nebula</p>
       <div class="about__intro" data-reveal-item>
         {profile?.image ? (
-          <Image src={profile.image} alt={`Foto de ${profile.name}`} width={160} height={160} class="about__photo" loading="lazy" decoding="async" />
+          <Image src={profile.image} alt={`Photo of ${profile.name}`} width={160} height={160} class="about__photo" loading="lazy" decoding="async" />
         ) : (
           <img src="/assets/placeholder.svg" alt="" width="160" height="160" class="about__photo" loading="lazy" decoding="async" />
         )}
         <div>
-          <h2 id="about-title" class="section-title" data-focus-target>Sobre mí</h2>
+          <h2 id="about-title" class="section-title" data-focus-target>About me</h2>
           <p class="about__role">{role}</p>
         </div>
       </div>
       <p class="about__bio" data-reveal-item>
-        {profile?.bio ?? 'Desarrollador de software enfocado en construir productos web rápidos y mantenibles.'}
+        {profile?.bio ?? 'Software developer focused on building fast, maintainable web products.'}
       </p>
 
       {(profile?.socialLinks?.github || profile?.socialLinks?.linkedin) && (

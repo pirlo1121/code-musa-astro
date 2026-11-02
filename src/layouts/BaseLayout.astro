@@ -14,7 +14,7 @@ interface Props {
 
 const {
   title       = "Maicol Bautista – Software Developer",
-  description = "Portfolio de Maicol Bautista, desarrollador de software especializado en JavaScript, Node.js, Express, MongoDB y AWS. Un viaje por el espacio a través de sus proyectos y habilidades.",
+  description = "Portfolio of Maicol Bautista, a software developer specialized in JavaScript, Node.js, Express, MongoDB and AWS. A journey through space across projects and skills.",
   ogImage     = "/assets/og-image.jpg",
 } = Astro.props;
 
@@ -23,7 +23,7 @@ const canonical = siteURL;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -41,7 +41,7 @@ const canonical = siteURL;
     <meta property="og:title"       content={title}>
     <meta property="og:description" content={description}>
     <meta property="og:image"       content={`${siteURL}${ogImage}`}>
-    <meta property="og:locale"      content="es_CO">
+    <meta property="og:locale"      content="en_US">
 
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content={title}>

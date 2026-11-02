@@ -21,12 +21,12 @@ const Effects = lazy(() => import('../components/canvas/Effects'));
 const HAZE = [
   { position: new Vector3(40, -30, -190), radius: new Vector3(80, 30, 60), palette: ['#3b2a8f', '#1d4f8f'] },
   { position: new Vector3(-10, 30, -560), radius: new Vector3(90, 35, 70), palette: ['#8f2a6b', '#2a3b8f'] },
-  { position: new Vector3(30, -20, -960), radius: new Vector3(80, 30, 60), palette: ['#1d6f8f', '#4b2a8f'] },
+  { position: new Vector3(30, -20, -770), radius: new Vector3(80, 30, 60), palette: ['#1d6f8f', '#4b2a8f'] },
 ];
 const HAZE_SCALE: [number, number] = [60, 120];
 
-// Stations 1–4 are nebulae (about, skills, projects, experience).
-const NEBULA_STATIONS = [1, 2, 3, 4];
+// Stations 1–3 are nebulae (about, skills, projects).
+const NEBULA_STATIONS = [1, 2, 3];
 
 export default function SpaceExperience() {
   const tier = useQualityTier();

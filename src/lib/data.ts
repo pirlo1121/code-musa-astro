@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../config';
+import { projectDescriptions } from '../data/projects-en';
 
 const USER_ID = '696c287de69192f9b00097c6';
 
@@ -47,6 +48,7 @@ export async function getProjects(): Promise<Project[]> {
     if (!data.ok) return [];
     return data.projects.map((p: Project) => ({
       ...p,
+      description: projectDescriptions[p._id] ?? p.description,
       stack: p.stack.flatMap((s: string) => s.split(' ')),
     }));
   } catch (err) {

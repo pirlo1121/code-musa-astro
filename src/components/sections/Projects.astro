@@ -15,12 +15,12 @@ const rest = sorted.slice(3);
 <section id="projects" class="station station--grid" aria-labelledby="projects-title">
   <div class="station__inner">
     <header class="section-head" data-reveal>
-      <p class="kicker" data-reveal-item>04 — Nebulosa carmesí</p>
-      <h2 id="projects-title" class="section-title" data-reveal-item data-focus-target>Proyectos</h2>
+      <p class="kicker" data-reveal-item>04 — Crimson nebula</p>
+      <h2 id="projects-title" class="section-title" data-reveal-item data-focus-target>Projects</h2>
     </header>
 
     {projects.length === 0 ? (
-      <p class="glass">No hay proyectos disponibles en este momento.</p>
+      <p class="glass">No projects available right now.</p>
     ) : (
       <>
         <ul class="project-grid" role="list" data-reveal>
@@ -34,7 +34,7 @@ const rest = sorted.slice(3);
             </ul>
             <div class="projects-toggle" data-reveal>
               <button type="button" class="btn btn--ghost" id="projects-toggle" aria-expanded="false" aria-controls="projects-more" data-reveal-item>
-                <span class="projects-toggle__label">Ver todos los proyectos ({projects.length})</span>
+                <span class="projects-toggle__label">View all projects ({projects.length})</span>
                 <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
               </button>
             </div>
@@ -98,7 +98,7 @@ const rest = sorted.slice(3);
     });
   });
 
-  // --- "Ver todos": the nebula opens up to reveal every project ---------------
+  // --- "View all": the nebula opens up to reveal every project ---------------
   const toggle = document.getElementById('projects-toggle');
   const more = document.getElementById('projects-more');
   const label = toggle?.querySelector('.projects-toggle__label');
@@ -107,7 +107,7 @@ const rest = sorted.slice(3);
     if (!more || !label) return;
     const expand = toggle.getAttribute('aria-expanded') !== 'true';
     toggle.setAttribute('aria-expanded', String(expand));
-    label.textContent = expand ? 'Ver menos' : `Ver todos los proyectos (${document.querySelectorAll('[data-project-open]').length})`;
+    label.textContent = expand ? 'View less' : `View all projects (${document.querySelectorAll('[data-project-open]').length})`;
     frame.expandedStation = expand ? PROJECTS_STATION : -1;
 
     if (expand) {

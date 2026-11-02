@@ -1,6 +1,6 @@
 # Viaje espacial — arquitectura técnica
 
-El portafolio es un recorrido *scrollytelling*: la página HTML se desplaza con normalidad y una cámara 3D viaja por seis objetos astronómicos, uno por sección.
+El portafolio es un recorrido *scrollytelling*: la página HTML se desplaza con normalidad y una cámara 3D viaja por cinco objetos astronómicos, uno por sección.
 
 | # | Sección | Objeto | Escena |
 |---|---------|--------|--------|
@@ -8,10 +8,9 @@ El portafolio es un recorrido *scrollytelling*: la página HTML se desplaza con 
 | 1 | Sobre mí | Nebulosa | `scenes/NebulaScene.tsx` |
 | 2 | Habilidades | Nebulosa esmeralda | `scenes/NebulaScene.tsx` |
 | 3 | Proyectos | Nebulosa carmesí | `scenes/NebulaScene.tsx` |
-| 4 | Trayectoria | Nebulosa zafiro | `scenes/NebulaScene.tsx` |
-| 5 | Contacto | Luna | `scenes/Moon.tsx` |
+| 4 | Contacto | Luna | `scenes/Moon.tsx` |
 
-Las cuatro nebulosas comparten composición y aproximación de cámara (`nebulaStation` en `scenes/layout.ts`); solo cambian la paleta (`NEBULAE`) y las semillas.
+Las tres nebulosas comparten composición y aproximación de cámara (`nebulaStation` en `scenes/layout.ts`); solo cambian la paleta (`NEBULAE`) y las semillas.
 
 ## 1. Punto de partida
 
@@ -56,7 +55,7 @@ src/
 ├── data/                    contenido estático editable
 │   ├── site.ts              secciones, frase, email, intereses
 │   ├── skills.ts            habilidades (nombre y color)
-│   └── experience.ts        trayectoria (⚠ placeholders)
+│   └── projects-en.ts       descripciones de proyectos en inglés (por _id)
 ├── hooks/                   useQuality, useStationVisibility, useBillboard
 ├── lib/
 │   ├── store.ts             estado compartido DOM ↔ WebGL (sin three.js)
@@ -149,7 +148,7 @@ Cada estación declara `frameX` y `frameY`: dónde debe quedar el objeto en pant
 
 ## 8. Contenido pendiente
 
-- `src/data/experience.ts`: **todos los valores son placeholders `[entre corchetes]`**.
+- `src/data/projects-en.ts`: al añadir un proyecto en la API, agrega aquí su descripción en inglés (si no, se muestra el texto de la API).
 - `src/data/skills.ts`: niveles y descripciones son estimaciones editables.
 - `src/data/site.ts`: `email` vacío (oculta el bloque) y la lista de intereses.
 

@@ -2,12 +2,11 @@
 // real HTML (crawlable, screen-reader friendly); the 3D scene only decorates it.
 
 export const SECTIONS = [
-  { id: 'hero',       label: 'Inicio',      object: 'Estrella' },
-  { id: 'about',      label: 'Sobre mí',    object: 'Nebulosa violeta' },
-  { id: 'skills',     label: 'Habilidades', object: 'Nebulosa esmeralda' },
-  { id: 'projects',   label: 'Proyectos',   object: 'Nebulosa carmesí' },
-  { id: 'experience', label: 'Trayectoria', object: 'Nebulosa zafiro' },
-  { id: 'contact',    label: 'Contacto',    object: 'Luna' },
+  { id: 'hero',     label: 'Home',     object: 'Star' },
+  { id: 'about',    label: 'About',    object: 'Violet nebula' },
+  { id: 'skills',   label: 'Skills',   object: 'Emerald nebula' },
+  { id: 'projects', label: 'Projects', object: 'Crimson nebula' },
+  { id: 'contact',  label: 'Contact',  object: 'Moon' },
 ] as const;
 
 export type SectionId = (typeof SECTIONS)[number]['id'];
@@ -17,7 +16,7 @@ export const site = {
   fallbackName: 'Maicol Bautista',
   fallbackRole: 'Software Developer',
 
-  tagline: 'Construyo software rápido, sólido y cuidado hasta el último detalle.',
+  tagline: 'I build fast, solid software, crafted down to the last detail.',
 
   // TODO: public contact address. Left empty on purpose — the e-mail block is
   // hidden until you fill it in.
